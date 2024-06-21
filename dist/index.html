@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Try MyInsights!</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="./q.js"></script>
+    <script type="text/javascript" src="./library.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        const app = Elm.Main.init({
+            node: document.getElementById("root"),
+            flags: {}
+        });
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+
+        if (app.ports && app.ports.elmToJs && app.ports.console) {
+            console.log = function (...args) {
+                originalLog(...args);
+                app.ports.console.send({ level: "LOG", args: [...args] });
+            };
+            console.warn = function (...args) {
+                originalWarn(...args);
+                app.ports.console.send({ level: "WARN", args: [...args] });
+            }
+            console.error = function (...args) {
+                originalError(...args);
+                app.ports.console.send({ level: "ERROR", args: [...args] });
+            }
+            app.ports.elmToJs.subscribe(({ tag, data }) => {
+                // Print out the message sent from Elm
+                originalLog(tag, data);
+                switch (tag) {
+                    case "RUN_JS":
+                        try {
+                            eval(data.code);
+                        } catch (error) {
+                            app.ports.console.send({ level: "ERROR", args: [error.message, "\n", error.stack] });
+                            originalError("Uncaught", error);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
