@@ -19,9 +19,13 @@ type alias Entry msg =
 type alias StandardDoc =
     { title : String
     , blurb : String
-    , parameters : List { name : String, type_ : String, description : String }
+    , parameters : List Parameter
     , return : String
     }
+
+
+type alias Parameter =
+    { name : String, type_ : String, description : String }
 
 
 standardDocs : StandardDoc -> Element msg
