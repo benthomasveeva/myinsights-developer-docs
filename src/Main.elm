@@ -74,7 +74,7 @@ init () =
 
 type Msg
     = NoOp
-    | SelectExample String
+    | SelectDocEntry String
     | UserTypedTryNow String String
     | ResetTryNow String
     | RunTryNow String
@@ -90,8 +90,8 @@ update msg model =
             , Cmd.none
             )
 
-        SelectExample entryName ->
-            ( { model | selectedExample = Just entryName }
+        SelectDocEntry entryName ->
+            ( { model | selectedExample = Just entryName, consoleLogs = [] }
             , Cmd.none
             )
 
@@ -241,7 +241,7 @@ viewSidebarItem model entry =
         , Element.focused
             []
         ]
-        { onPress = Just (SelectExample entry.name)
+        { onPress = Just (SelectDocEntry entry.name)
         , label = Element.text entry.name
         }
 
@@ -265,8 +265,6 @@ viewExampleBody model entry =
         , Element.Background.color Style.background
         ]
         [ entry.docs
-
-        -- Element.el [ width fill, height fill, scrollbars ] (Element.html (Markdown.toHtmlWith markdownOptions [] entry.docs))
         , Components.Card.view "Try Now" <|
             Element.column
                 [ height Element.shrink
