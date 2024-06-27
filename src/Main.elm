@@ -12,6 +12,7 @@ import Element.Font
 import Element.Input
 import Element.Region
 import Html exposing (Html)
+import Html.Attributes
 import Json.Decode as JD exposing (Decoder)
 import Json.Encode as JE exposing (Value)
 import Maybe.Extra
@@ -30,7 +31,7 @@ main =
 
 entriesByName : Dict String (Entry msg)
 entriesByName =
-    Documentation.entrys
+    Documentation.entries
         |> List.map (\entry -> ( entry.name, entry ))
         |> Dict.fromList
 
@@ -60,7 +61,7 @@ type ConsoleLevel
 
 init : () -> ( Model, Cmd Msg )
 init () =
-    ( { selectedExample = List.head Documentation.entrys |> Maybe.map .name
+    ( { selectedExample = List.head Documentation.entries |> Maybe.map .name
       , tryNowTexts = Dict.empty
       , consoleLogs = []
       }
@@ -215,11 +216,13 @@ viewSidebar : Model -> Element Msg
 viewSidebar model =
     Element.column
         [ height fill
+        , Element.htmlAttribute (Html.Attributes.style "flex-basis" "auto")
+        , Element.scrollbarY
         , Element.paddingEach { eachMargin | left = 0 }
         , Element.Border.widthEach { eachZero | right = 1 }
         , Element.Border.color Style.silverLight
         ]
-        (List.map (viewSidebarItem model) Documentation.entrys)
+        (List.map (viewSidebarItem model) Documentation.entries)
 
 
 viewSidebarItem : Model -> Entry Msg -> Element Msg
@@ -315,7 +318,7 @@ viewExampleBody model entry =
                                 (List.map (viewExample entry) entry.tryNowOptions)
                         ]
                     , Element.column
-                        [ height (Element.shrink |> Element.minimum 200 |> Element.maximum 600)
+                        [ height (Element.shrink |> Element.minimum 200 |> Element.maximum 400)
                         , width fill
                         , Element.scrollbarY
                         , Element.Border.width 1
@@ -343,13 +346,45 @@ viewExample entry { name, code } =
 
 viewConsoleLogEntry : ConsoleEntry -> Element Msg
 viewConsoleLogEntry logEntry =
+    let
+        textToShow =
+            case
+                JD.decodeString JD.value logEntry.text
+            of
+                Ok value ->
+                    JE.encode 4 value
+
+                Err _ ->
+                    logEntry.text
+    in
     Element.row [ width fill, Element.Background.color (colorForLevel logEntry.level) ]
         [ Element.el [ Element.alignTop ] (Element.text "> ")
-        , logEntry.text
-            |> String.split "\n"
-            |> List.map (Element.text >> List.singleton >> Element.paragraph [ width fill ])
+        , textToShow
+            |> String.lines
+            |> List.map (replaceLeadingSpaces >> Element.text >> List.singleton >> Element.paragraph [ width fill ])
             |> Element.column [ width fill ]
         ]
+
+
+replaceLeadingSpaces : String -> String
+replaceLeadingSpaces =
+    String.toList
+        >> countAndTrimLeadingSpaces
+        >> (\( count, restOfLine ) -> String.repeat count "\u{00A0}" ++ String.fromList restOfLine)
+
+
+countAndTrimLeadingSpaces : List Char -> ( Int, List Char )
+countAndTrimLeadingSpaces chars =
+    let
+        recursionHelper countSoFar charsRemaining =
+            case charsRemaining of
+                ' ' :: rest ->
+                    recursionHelper (countSoFar + 1) rest
+
+                _ ->
+                    ( countSoFar, charsRemaining )
+    in
+    recursionHelper 0 chars
 
 
 colorForLevel : ConsoleLevel -> Element.Color

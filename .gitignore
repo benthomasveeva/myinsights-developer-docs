@@ -1,4 +1,8 @@
 /dist/main.js
 /elm-stuff
 /node_modules
+/.elm-pages
+/codegen/elm-stuff
+/codegen/Gen
+/generated
 .DS_Store

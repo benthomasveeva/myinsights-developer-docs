@@ -12,7 +12,7 @@ type alias Entry msg =
     { name : String
     , docs : Element msg
     , defaultTryNow : String
-    , tryNowOptions : List { name : String, code : String }
+    , tryNowOptions : List Example
     }
 
 
@@ -28,6 +28,10 @@ type alias Parameter =
     { name : String, type_ : String, description : String }
 
 
+type alias Example =
+    { name : String, code : String }
+
+
 standardDocs : StandardDoc -> Element msg
 standardDocs doc =
     Components.Card.view doc.title
@@ -37,7 +41,7 @@ standardDocs doc =
             , Element.spacing Style.margin
             , Element.padding (Style.margin * 3)
             ]
-            [ Element.text doc.blurb
+            [ Element.paragraph [] [ Element.text doc.blurb ]
             , viewParameters doc
             , h2 "Return"
             , Element.text doc.return
