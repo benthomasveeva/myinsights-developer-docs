@@ -1,5 +1,5 @@
 /*
- *  Veeva MyInsights Library version 241.1.1
+ *  Veeva MyInsights Library version 233.4.1152
  *  
  *  http://developer.veevacrm.com/
  *  
@@ -1347,6 +1347,81 @@
               return customErrorObject;
           }
   
+          function getVeevaMessagesHelper(deferred, config, languageFilter, defaultResponseArr) {
+              config.where += " AND (Language_vod__c='" + languageFilter + "'";
+              if (languageFilter === "en_US") {
+                  config.where += ")";
+              } else {
+                  config.where += " OR Language_vod__c='en_US')";
+              }
+  
+              ds.runQuery(config)
+                      .then(function (resp) {
+                          let queryData = resp.data;
+                          deferred.resolve(combineQueryResults(queryData, defaultResponseArr, languageFilter));
+                      });
+          }
+  
+          function buildDefaultResponse(msgName, msgCategory, defaultStr) {
+              return {
+                  Category_vod__c: { value: msgCategory, display: msgCategory, dataType: 'string', label: '' },
+                  Language_vod__c: { value: '', display: '', label: '', dataType: 'string' },
+                  Name: { value: msgName, display: msgName, dataType: 'string', label: '' },
+                  Text: { value: defaultStr, display: defaultStr, dataType: 'string', label: '' },
+              };
+          }
+  
+          function getLanguageFilter(languageLocaleKey) {
+              let deferred = Q.defer();
+  
+              if (languageLocaleKey) {
+                  deferred.resolve(languageLocaleKey);
+              } else {
+                  ds.getDataForCurrentObject('User', 'LanguageLocaleKey').then(function (resp) {
+                      deferred.resolve(resp.User.LanguageLocaleKey);
+                  });
+              }
+  
+              return deferred.promise;
+          }
+  
+          function combineQueryResults(queryData, defaultResponseArr, languageFilter) {
+              let allData = [];
+              //add all messages with given language filter
+              for (let message of queryData) {
+                  if (message.Language_vod__c.value === languageFilter) {
+                      allData.push(message);
+                  }
+              }
+  
+              //add backup messages if needed
+              if (languageFilter !== "en_US") {
+                  for (let message of queryData) {
+                      if (!dataContainsMessage(message, allData)) {
+                          allData.push(message);
+                      }
+                  }
+              }
+  
+              //add defaults if needed
+              for (let defaultMessage of defaultResponseArr) {
+                  if (!dataContainsMessage(defaultMessage, allData)) {
+                      allData.push(defaultMessage);
+                  }
+              }
+  
+              return allData;
+          }
+  
+          function dataContainsMessage(message, allData) {
+              for (let dataMessage of allData) {
+                  if (dataMessage.Name.value === message.Name.value && dataMessage.Category_vod__c.value === message.Category_vod__c.value) {
+                      return true;
+                  }
+              }
+              return false;
+          }
+  
           function formatDataEngineConfig(config) {
               if (config != null && config.fields) {
                   config.fields = formatDataConfigFieldArray(config.fields);
@@ -1358,14 +1433,10 @@
               return config
           }
   
-          function sendRequestAndRejectPromiseForFailure(request, deferred, resultKey) {
+          function sendRequestAndRejectPromiseForFailure(request, deferred) {
               ds.doPostMessage(request).then(response => {
                   if (response.success === true) {
-                    if (resultKey) {
-                      deferred.resolve(response[resultKey]);
-                    } else {
                       deferred.resolve(response);
-                    }
                   } else {
                       deferred.reject(response);
                   }
@@ -1623,6 +1694,41 @@
               return deferred.promise;
           };
   
+          ds.getVeevaMessagesWithDefault = function (tokens, languageLocaleKey) {
+              let deferred = Q.defer();
+              let config = veevaUtil.copyObject(queries.translations);
+              let whereSubClauses = [];
+              let index = tokens.length;
+              let isActiveFilter = '';
+              let defaultResponseArr = [];
+  
+  
+              while (index--) {
+                  whereSubClauses.push("(Name='" + tokens[index].msgName + "' AND Category_vod__c='" + tokens[index].msgCategory + "')");
+                  if (tokens[index].default) {
+                      defaultResponseArr.push(buildDefaultResponse(tokens[index].msgName, tokens[index].msgCategory, tokens[index].default));
+                  }
+              }
+  
+              if (veevaUtil.isWin8() && veevaUtil.isWindowsMobile()) {
+                  isActiveFilter = "Active_vod__c='true'";
+              } else if (veevaUtil.isOnline()) {
+                  isActiveFilter = "Active_vod__c=true";
+              } else {
+                  isActiveFilter = "Active_vod__c=1";
+              }
+  
+              config.where += "(" + whereSubClauses.join(" OR ") + ")" + " AND " + isActiveFilter;
+  
+              getLanguageFilter(languageLocaleKey).then(function (languageFilter) {
+                  if (whereSubClauses.length) {
+                      getVeevaMessagesHelper(deferred, config, languageFilter, defaultResponseArr);
+                  }
+              });
+  
+              return deferred.promise;
+          };
+  
           ds.delegateQueryRequest = function(request, deferred, respHandler) {
               ds.queryRunning = true;
               query(request).then(function(resp) {
@@ -1759,7 +1865,7 @@
           ds.viewSection = function(target) {
               var deferred = Q.defer();
               if(target) {
-                  const fields = ['ID', 'Studio_Id_vod__c', 'External_Id_vod__c', 'id', 'studio_id__v', 'external_id__v'];
+                  const fields = ['ID', 'Studio_Id_vod__c', 'External_Id_vod__c'];
                   if(!Array.isArray(target)){
                       target = [target];
                   }
@@ -2295,60 +2401,6 @@
               return deferred.promise;
           };
   
-          ds.getMessages = function(tokens) {
-            var deferred = Q.defer();
-  
-            if (tokens && tokens instanceof Array) {
-                const validProps = ["name", "group", "default"];
-                let hasValidTokens = true;
-                for (const token of tokens) {
-                  for (const prop in token) {
-                    if (!validProps.includes(prop)) {
-                      hasValidTokens = false;
-                        deferred.reject(createErrorResponse(errorCode.INVALID_PARAM, 'getMessages called with invalid token property - ' + prop));
-                        break;
-                    }
-                  }
-                  if (!hasValidTokens) {
-                    break;
-                  }
-                }
-  
-                if (hasValidTokens) {
-                    sendRequestAndRejectPromiseForFailure({
-                        command: "getMessages",
-                        tokens
-                    }, deferred, "messages");
-                }
-            }
-            else {
-                deferred.reject(createErrorResponse(errorCode.NO_PARAMETER, 'getMessages called without a valid array of tokens: ' + JSON.stringify(configObject)));
-            }
-  
-            return deferred.promise;
-          };
-  
-          ds.getVeevaMessagesWithDefault = function(tokens) {
-            var getMessagesTokens = tokens.map((t) => {
-              return {
-                group: t.msgCategory,
-                name: t.msgName,
-                default: t.default
-              };
-            });
-            return ds.getMessages(getMessagesTokens)
-              .then((resp) => {
-                return resp.map((msg) => {
-                  return {
-                    Category_vod__c: { value: msg.group, display: msg.group, dataType: "string", label: "" },
-                    Language_vod__c: { value: "", display: "", dataType: "string", label: "" },
-                    Name: { value: msg.name, display: msg.name, dataType: "string", label: "" },
-                    Text_vod__c: { value: msg.text, display: msg.text, dataType: "string", label: "" }
-                  }
-                })
-              });
-          };
-  
           ds.getDataEngineTables = function() {
               var deferred = Q.defer();
               sendRequestAndRejectPromiseForFailure({
@@ -2409,10 +2461,6 @@
           ds.getAttendeeDataForCurrentCall = function() {
               return ds.doPostMessage({command: 'getAttendeeDataForCurrentCall'});
           };
-  
-          ds.getVeevaLinkAccessToken = function() {
-            return ds.doPostMessage({command: "getVeevaLinkAccessToken"});
-          }
   
           // We will do nothing when this method is called window.OnlineAPI is responsible for calling postMessage
           ds.onlinePostMessage = function() {}
