@@ -215,6 +215,7 @@ view model =
     Element.layout
         [ width fill
         , height fill
+        , Element.clip
         , Element.Font.size 14
         , Element.Font.color Style.extendedCoal
         , Element.Font.family [ Element.Font.typeface "-apple-system", Element.Font.sansSerif ]
