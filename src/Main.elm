@@ -116,9 +116,13 @@ update msg model =
         RxConsoleLog consoleJson ->
             case JD.decodeValue logEntryDecoder consoleJson of
                 Ok logEntry ->
-                    ( { model | consoleLogs = logEntry :: model.consoleLogs }
-                    , Cmd.none
-                    )
+                    if List.member logEntry ignoredEntries then
+                        ( model, Cmd.none )
+
+                    else
+                        ( { model | consoleLogs = logEntry :: model.consoleLogs }
+                        , Cmd.none
+                        )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -127,6 +131,14 @@ update msg model =
             ( { model | tryNowTexts = Dict.insert entryName newText model.tryNowTexts }
             , Cmd.none
             )
+
+
+ignoredEntries : List ConsoleEntry
+ignoredEntries =
+    [ { level = Warn
+      , text = "\"deferred object not found\" {\"command\":\"queryReturn\"}"
+      }
+    ]
 
 
 logEntryDecoder : Decoder ConsoleEntry
