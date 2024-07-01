@@ -44,7 +44,9 @@ standardDocs doc =
             [ Element.paragraph [] [ Element.text doc.blurb ]
             , viewParameters doc
             , h2 "Return"
-            , Element.text doc.return
+            , Element.paragraph [ width fill ]
+                [ Element.text doc.return
+                ]
             ]
         )
 
