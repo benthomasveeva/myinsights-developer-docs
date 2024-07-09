@@ -306,7 +306,7 @@ viewExampleBody model entry =
                             , Element.focused [ Element.Background.color Style.extendedMist ]
                             ]
                             { onPress = Just (RunTryNow entry.name)
-                            , label = Element.text "Run"
+                            , label = Element.text "Run ›"
                             }
                         , Element.Input.button
                             [ width fill
@@ -371,7 +371,7 @@ viewConsoleLogEntry logEntry =
                     logEntry.text
     in
     Element.row [ width fill, Element.Background.color (colorForLevel logEntry.level) ]
-        [ Element.el [ Element.alignTop ] (Element.text "> ")
+        [ Element.el [ Element.alignTop ] (Element.text "› ")
         , textToShow
             |> String.lines
             |> List.map (replaceLeadingSpaces >> Element.text >> List.singleton >> Element.paragraph [ width fill ])

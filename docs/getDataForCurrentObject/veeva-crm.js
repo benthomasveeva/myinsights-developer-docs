@@ -1,2 +1,2 @@
-// get the current Account's name
-ds.getDataForCurrentObject("Account", "Name").then(console.log, console.warn);
+// get the current User's name
+ds.getDataForCurrentObject("User", "Name").then(console.log, console.warn);
