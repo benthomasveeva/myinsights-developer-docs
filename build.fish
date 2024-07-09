@@ -2,6 +2,7 @@
 npx elm-pages run CreateDocumentation
 elm make ./src/Main.elm --output ./dist/main.js
 for d in $simulator_dir
+    echo "copying to simulator: $d"
     cp -R ./dist/ $d
 end
 if test -e ./dist/library.js 
@@ -12,7 +13,7 @@ if test -e ./dist/veeva-crm-library.js
 end
 if set -q export_zip
     cd ./dist
+    echo "writing to zip: $export_zip"
     zip -r -FS $export_zip ./
-    echo $export_zip
     cd ..
 end
