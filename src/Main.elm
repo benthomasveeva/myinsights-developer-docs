@@ -13,6 +13,7 @@ import Element.Input
 import Element.Region
 import Html exposing (Html)
 import Html.Attributes
+import Html.Events
 import Json.Decode as JD exposing (Decoder)
 import Json.Encode as JE exposing (Value)
 import Maybe.Extra
@@ -97,7 +98,14 @@ update msg model =
             )
 
         UserTypedTryNow entryName newText ->
-            ( { model | tryNowTexts = Dict.insert entryName newText model.tryNowTexts }
+            ( { model
+                | tryNowTexts =
+                    if model.selectedExample == Just entryName then
+                        Dict.insert entryName newText model.tryNowTexts
+
+                    else
+                        model.tryNowTexts
+              }
             , Cmd.none
             )
 
@@ -285,15 +293,35 @@ viewExampleBody model entry =
             Element.column
                 [ height Element.shrink
                 , width fill
-                , Element.spacing Style.margin
                 ]
-                [ Element.Input.multiline [ height (Element.shrink |> Element.minimum 50 |> Element.maximum 300) ]
-                    { onChange = UserTypedTryNow entry.name
-                    , text = Dict.get entry.name model.tryNowTexts |> Maybe.withDefault entry.defaultTryNow
-                    , placeholder = Nothing
-                    , label = Element.Input.labelHidden "Code"
-                    , spellcheck = False
-                    }
+                [ Element.row [ width fill, Element.spacing Style.margin ]
+                    [ if List.isEmpty entry.tryNowOptions then
+                        Element.none
+
+                      else
+                        Element.column
+                            [ width (Element.shrink |> Element.minimum 100)
+                            , Element.spacing Style.margin
+                            , height fill
+                            , Element.Border.widthEach { eachZero | top = 1 }
+                            , Element.Border.color Style.silverLight
+                            , Element.paddingEach { eachZero | top = Style.margin }
+                            ]
+                            (List.map (viewExample entry) entry.tryNowOptions)
+                    , Element.el [ width fill ]
+                        (Element.html
+                            (Html.node "codemirror-element"
+                                [ Html.Attributes.attribute "value"
+                                    (Dict.get entry.name model.tryNowTexts
+                                        |> Maybe.withDefault entry.defaultTryNow
+                                        |> makeThereBeAtLeastFourLines
+                                    )
+                                , Html.Events.on "codemirrorInput" (JD.map (UserTypedTryNow entry.name) (JD.field "detail" JD.string))
+                                ]
+                                []
+                            )
+                        )
+                    ]
                 , Element.row [ width fill, Element.spacing Style.margin ]
                     [ Element.column
                         [ height fill
@@ -316,19 +344,6 @@ viewExampleBody model entry =
                             { onPress = Just (ResetTryNow entry.name)
                             , label = Element.text "Reset"
                             }
-                        , if List.isEmpty entry.tryNowOptions then
-                            Element.none
-
-                          else
-                            Element.column
-                                [ width fill
-                                , Element.spacing Style.margin
-                                , height fill
-                                , Element.Border.widthEach { eachZero | top = 1 }
-                                , Element.Border.color Style.silverLight
-                                , Element.paddingEach { eachZero | top = Style.margin }
-                                ]
-                                (List.map (viewExample entry) entry.tryNowOptions)
                         ]
                     , Element.column
                         [ height (Element.shrink |> Element.minimum 200 |> Element.maximum 400)
@@ -343,6 +358,15 @@ viewExampleBody model entry =
                     ]
                 ]
         ]
+
+
+makeThereBeAtLeastFourLines : String -> String
+makeThereBeAtLeastFourLines words =
+    let
+        numLines =
+            List.length (String.lines words)
+    in
+    words ++ String.repeat (4 - numLines) "\n"
 
 
 viewExample : Entry Msg -> { name : String, code : String } -> Element Msg

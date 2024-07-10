@@ -1,0 +1,17 @@
+{
+  "name": "myinsights-developer-docs",
+  "version": "1.0.0",
+  "description": "Interactive documentation for MyInsights",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ben Thomas",
+  "license": "MIT",
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "codemirror": "^6.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3"
+  }
+}
