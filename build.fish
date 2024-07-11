@@ -1,6 +1,7 @@
 #!/usr/local/bin/fish
 npx elm-pages run CreateDocumentation
 elm make ./src/Main.elm --output ./dist/main.js
+rollup -c
 for d in $simulator_dir
     echo "copying to simulator: $d"
     cp -R ./dist/ $d
