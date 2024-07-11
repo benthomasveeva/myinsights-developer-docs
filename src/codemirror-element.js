@@ -49,6 +49,7 @@ export class CustomEditor extends HTMLElement {
         basicSetup,
         javascript(),
         keymap.of([indentWithTab]),
+        EditorView.lineWrapping,
         EditorView.updateListener.of(_handleInput),
       ],
     });
