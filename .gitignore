@@ -1,5 +1,6 @@
 /dist/main.js
 /dist/codemirror-element.js
+/dist/library.js
 /elm-stuff
 /node_modules
 /.elm-pages

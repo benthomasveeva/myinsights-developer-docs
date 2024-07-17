@@ -1,0 +1,1 @@
+ds.getObjectLabels(['account__v', 'html_report__v']).then(console.log, console.warn);

@@ -1,4 +1,4 @@
-module CreateDocumentation exposing (run)
+module CreateDocumentation exposing (generateFromDirectory)
 
 import BackendTask exposing (BackendTask)
 import BackendTask.File as File
@@ -15,20 +15,20 @@ import Pages.Script as Script exposing (Script)
 import String.Extra
 
 
-run : Script
-run =
+generateFromDirectory : String -> Script
+generateFromDirectory dirName =
     Script.withoutCliOptions
         (BackendTask.map3 makeDocFile
-            readDocJsonFile
-            readDefaultTryNowFiles
-            readTryNowExampleFiles
+            (readDocJsonFile dirName)
+            (readDefaultTryNowFiles dirName)
+            (readTryNowExampleFiles dirName)
             |> BackendTask.andThen writeDocFile
         )
 
 
-readDocJsonFile : BackendTask FatalError (List ( String, StandardDoc ))
-readDocJsonFile =
-    File.jsonFile entryDecoder "docs/docs.json"
+readDocJsonFile : String -> BackendTask FatalError (List ( String, StandardDoc ))
+readDocJsonFile dirName =
+    File.jsonFile entryDecoder ("docs/" ++ dirName ++ "/docs.json")
         |> BackendTask.allowFatal
 
 
@@ -47,20 +47,20 @@ type alias FileId =
     { filepath : String, key : String }
 
 
-findDefaultTryNowFiles : BackendTask FatalError (List FileId)
-findDefaultTryNowFiles =
+findDefaultTryNowFiles : String -> BackendTask FatalError (List FileId)
+findDefaultTryNowFiles dirName =
     Glob.succeed FileId
         |> Glob.captureFilePath
-        |> Glob.match (Glob.literal "docs/")
+        |> Glob.match (Glob.literal ("docs/" ++ dirName ++ "/"))
         |> Glob.capture Glob.wildcard
         |> Glob.match (Glob.literal ".js")
         |> Glob.toBackendTask
         |> BackendTask.allowFatal
 
 
-readDefaultTryNowFiles : BackendTask FatalError (Dict String String)
-readDefaultTryNowFiles =
-    findDefaultTryNowFiles
+readDefaultTryNowFiles : String -> BackendTask FatalError (Dict String String)
+readDefaultTryNowFiles dirName =
+    findDefaultTryNowFiles dirName
         |> BackendTask.map
             (List.map
                 (\fileId ->
@@ -80,11 +80,11 @@ type alias ExampleId =
     }
 
 
-findTryNowExampleFiles : BackendTask FatalError (List ExampleId)
-findTryNowExampleFiles =
+findTryNowExampleFiles : String -> BackendTask FatalError (List ExampleId)
+findTryNowExampleFiles dirName =
     Glob.succeed ExampleId
         |> Glob.captureFilePath
-        |> Glob.match (Glob.literal "docs/")
+        |> Glob.match (Glob.literal ("docs/" ++ dirName ++ "/"))
         |> Glob.capture Glob.wildcard
         |> Glob.match (Glob.literal "/")
         |> Glob.capture Glob.wildcard
@@ -100,9 +100,9 @@ type alias FullExample =
     }
 
 
-readTryNowExampleFiles : BackendTask FatalError (Dict String (List Example))
-readTryNowExampleFiles =
-    findTryNowExampleFiles
+readTryNowExampleFiles : String -> BackendTask FatalError (Dict String (List Example))
+readTryNowExampleFiles dirName =
+    findTryNowExampleFiles dirName
         |> BackendTask.map
             (List.map
                 (\exampleId ->
