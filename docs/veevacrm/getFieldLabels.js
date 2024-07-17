@@ -1,1 +1,1 @@
-ds.getFieldLabels({object:"html_report__v", fields:['name__v', 'platform__v', 'profile__v']}).then(console.log, console.warn);
+ds.getFieldLabels({object:"HTML_Report_vod__c", fields:['Name', 'Platform_vod__c', 'Profile_vod__c']}).then(console.log, console.warn);

@@ -1,7 +1,7 @@
 let config = { 
-    object: "Account", 
-    fields: ["Id", "Name"],
-    where: "IsPersonAccount = true",
+    object: "account__v", 
+    fields: ["id", "name__v"],
+    where: "name__v != 'Matthew'",
     sort: ["Name ASC"],
     limit: 10
 }; 

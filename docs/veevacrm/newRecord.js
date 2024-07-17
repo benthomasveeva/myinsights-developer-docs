@@ -1,7 +1,7 @@
 let config = {
-    object: 'medical_inquiry__v',
+    object: 'Account',
     fields: {
-        account__v: '<insert_account_id_here>',
+        Name: 'Testy McTesterson',
     },
 };
 ds.newRecord(config).then(console.log, console.warn);

@@ -1,1 +1,1 @@
-ds.getRecordTypeLabels("account__v").then(console.log, console.warn);
+ds.getRecordTypeLabels("Account").then(console.log, console.warn);

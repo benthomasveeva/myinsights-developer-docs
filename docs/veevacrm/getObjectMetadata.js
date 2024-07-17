@@ -1,1 +1,1 @@
-ds.getObjectMetadata({ object: "html_report__v" }).then(console.log, console.warn);
+ds.getObjectMetadata({ object: "HTML_Report_vod__c" }).then(console.log, console.warn);

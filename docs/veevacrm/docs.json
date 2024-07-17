@@ -126,32 +126,6 @@
             }
         ]
     },
-    "getMessages": {
-        "title": "getMessages(tokens, localeKey)",
-        "blurb": "The getMessages method returns the translated value of each of the tokens passed in to the language specified by the localeKey. The tokens must be case sensitive and exactly match the Message record.",
-        "parameters": [
-            {
-                "name": "tokens",
-                "type": "Array of objects",
-                "description": "A list of tokens representing the messages to be translated."
-            },
-            {
-                "name": "tokens[n].msgCategory",
-                "type": "string",
-                "description": "The category of the message to translate."
-            },
-            {
-                "name": "tokens[n].msgName",
-                "type": "string",
-                "description": "The name of the message to translate."
-            },
-            {
-                "name": "localeKey",
-                "type": "string",
-                "description": "Optional. Will use the locale of the current user when missing."
-            }
-        ]
-    },
     "getAvailableObjects": {
         "title": "getAvailableObjects()",
         "blurb": "This method retrieves a list of objects for which the user has Read permissions to in their org."
