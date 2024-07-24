@@ -210,9 +210,9 @@
                 "description": "The API name of the object that you wish to query metadata for."
             },
             {
-                "name": "fields",
-                "type": "Array of strings",
-                "description": "The API names of the fields whose picklist labels you wish to query."
+                "name": "field",
+                "type": "string",
+                "description": "The API name of the field whose picklist labels you wish to query."
             }
         ]
     },
