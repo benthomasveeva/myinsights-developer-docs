@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="height: calc(100% - 1px); min-height: 600px; ">
+<html lang="en">
 
 <head>
     <title>Try MyInsights!</title>
@@ -11,12 +11,12 @@
     <script type="text/javascript" src="./codemirror-element.js"></script>
 </head>
 
-<body style="height: calc(100% + 1px)">
+<body>
     <div id="root"></div>
     <script>
         const app = Elm.Main.init({
             node: document.getElementById("root"),
-            flags: {}
+            flags: { width: window.innerWidth, height: window.innerHeight }
         });
         const originalLog = console.log;
         const originalWarn = console.warn;

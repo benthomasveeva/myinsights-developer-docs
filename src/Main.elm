@@ -1,6 +1,7 @@
 port module Main exposing (main)
 
 import Browser
+import Browser.Events
 import Components.Card
 import Dict exposing (Dict)
 import DocHelpers exposing (Entry)
@@ -20,7 +21,7 @@ import Maybe.Extra
 import Style exposing (eachMargin, eachZero)
 
 
-main : Program () Model Msg
+main : Program Value Model Msg
 main =
     Browser.element
         { init = init
@@ -45,6 +46,7 @@ type alias Model =
     { selectedExample : Maybe String
     , tryNowTexts : Dict String String
     , consoleLogs : List ConsoleEntry
+    , window : Window
     }
 
 
@@ -54,20 +56,37 @@ type alias ConsoleEntry =
     }
 
 
+type alias Window =
+    { resizeCount : Int
+    , width : Int
+    , height : Int
+    }
+
+
 type ConsoleLevel
     = Log
     | Warn
     | Error
 
 
-init : () -> ( Model, Cmd Msg )
-init () =
+init : Value -> ( Model, Cmd Msg )
+init flags =
     ( { selectedExample = List.head Documentation.entries |> Maybe.map .name
       , tryNowTexts = Dict.empty
       , consoleLogs = []
+      , window =
+            JD.decodeValue windowDecoder flags
+                |> Result.withDefault { width = 1024, height = 768, resizeCount = 0 }
       }
     , Cmd.none
     )
+
+
+windowDecoder : Decoder Window
+windowDecoder =
+    JD.map2 (Window 0)
+        (JD.field "width" JD.int)
+        (JD.field "height" JD.int)
 
 
 
@@ -82,6 +101,7 @@ type Msg
     | RunTryNow String
     | RxConsoleLog Value
     | UserSelectedExampleCode String String
+    | WindowResized Int Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -137,6 +157,11 @@ update msg model =
 
         UserSelectedExampleCode entryName newText ->
             ( { model | tryNowTexts = Dict.insert entryName newText model.tryNowTexts }
+            , Cmd.none
+            )
+
+        WindowResized width height ->
+            ( { model | window = { width = width, height = height, resizeCount = model.window.resizeCount + 1 } }
             , Cmd.none
             )
 
@@ -211,38 +236,114 @@ port console : (Value -> msg) -> Sub msg
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    console RxConsoleLog
+    Sub.batch
+        [ console RxConsoleLog
+        , Browser.Events.onResize WindowResized
+        ]
 
 
 
 -- VIEW
 
 
+type PlatformGuess
+    = ProbablyOnline
+    | ProbablyIpad
+    | ProbablyIphone
+
+
+guessPlatform : Window -> PlatformGuess
+guessPlatform window =
+    if window.resizeCount > 1 || window.height < 10 then
+        ProbablyOnline
+
+    else
+        case (Element.classifyDevice window).class of
+            Element.Phone ->
+                ProbablyIphone
+
+            Element.Tablet ->
+                ProbablyIpad
+
+            _ ->
+                ProbablyOnline
+
+
 view : Model -> Html Msg
 view model =
+    viewLayout (guessPlatform model.window) model
+
+
+viewLayout : PlatformGuess -> Model -> Html Msg
+viewLayout platform model =
     Element.layout
-        [ width fill
-        , height fill
-        , Element.clip
-        , Element.Font.size 14
-        , Element.Font.color Style.extendedCoal
-        , Element.Font.family [ Element.Font.typeface "-apple-system", Element.Font.sansSerif ]
-        ]
-        (Element.row [ width fill, height fill ]
-            [ viewSidebar model, viewBody model ]
+        ([ width fill
+         , Element.clip
+         , Element.Font.size 14
+         , Element.Font.color Style.extendedCoal
+         , Element.Font.family [ Element.Font.typeface "-apple-system", Element.Font.sansSerif ]
+         ]
+            ++ platformLayoutAttrs platform
+        )
+        (case platform of
+            ProbablyOnline ->
+                Element.row [ width fill, height fill ]
+                    [ viewOnlineSidebar model, viewBody model ]
+
+            ProbablyIpad ->
+                Element.row [ width fill, height fill ]
+                    [ viewIpadSidebar model, viewBody model ]
+
+            ProbablyIphone ->
+                Element.column [ width fill ]
+                    [ viewIphoneHeader model, viewBody model ]
         )
 
 
-viewSidebar : Model -> Element Msg
-viewSidebar model =
-    Element.column
+platformLayoutAttrs : PlatformGuess -> List (Element.Attribute Msg)
+platformLayoutAttrs platform =
+    case platform of
+        ProbablyOnline ->
+            [ Element.height Element.shrink
+            , Element.inFront (Element.html (Html.node "style" [] [ Html.text "html,body{height:auto !important};" ]))
+            ]
+
+        _ ->
+            [ height fill ]
+
+
+viewOnlineSidebar : Model -> Element Msg
+viewOnlineSidebar =
+    viewSidebar
+        [ height (Element.shrink |> Element.minimum 600)
+        , Element.alignTop
+        ]
+
+
+viewIpadSidebar : Model -> Element Msg
+viewIpadSidebar =
+    viewSidebar
         [ height fill
         , Element.htmlAttribute (Html.Attributes.style "flex-basis" "auto")
         , Element.scrollbarY
-        , Element.paddingEach { eachMargin | left = 0 }
-        , Element.Border.widthEach { eachZero | right = 1 }
-        , Element.Border.color Style.silverLight
         ]
+
+
+viewIphoneHeader : Model -> Element Msg
+viewIphoneHeader =
+    viewSidebar
+        [ width fill, height Element.shrink ]
+
+
+viewSidebar : List (Element.Attribute Msg) -> Model -> Element Msg
+viewSidebar extraAttrs model =
+    Element.column
+        (extraAttrs
+            ++ [ Element.paddingEach { eachMargin | left = 0 }
+               , Element.Border.widthEach { eachZero | right = 1 }
+               , Element.Border.color Style.silverLight
+               ]
+        )
         (List.map (viewSidebarItem model) Documentation.entries)
 
 
