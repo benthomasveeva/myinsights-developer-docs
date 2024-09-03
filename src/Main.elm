@@ -258,11 +258,17 @@ guessPlatform window =
         ProbablyOnline
 
     else
-        case (Element.classifyDevice window).class of
-            Element.Phone ->
+        let
+            device =
+                Element.classifyDevice window
+        in
+        case ( device.class, device.orientation ) of
+            ( Element.Phone, Element.Portrait ) ->
+                -- the iPhone app is only ever in portrait mode
                 ProbablyIphone
 
-            Element.Tablet ->
+            ( Element.Tablet, Element.Landscape ) ->
+                -- the iPad app is only ever in landscape mode
                 ProbablyIpad
 
             _ ->
