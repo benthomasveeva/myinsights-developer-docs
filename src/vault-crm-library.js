@@ -1,9 +1,9 @@
 /*
- *  Veeva MyInsights Library version 241.1.1
+ *  Veeva MyInsights Library version 242.2.1156
  *  
  *  http://developer.veevacrm.com/
  *  
- *  Copyright Â© 2023 Veeva Systems, Inc. All rights reserved.
+ *  Copyright © 2024 Veeva Systems, Inc. All rights reserved.
  *  
  *  My Insights Library is dependent on the Q library, which enables you to work with promises as returns from the My Insights Library methods.
  *  Include the Q library as a script in the custom report package.
@@ -2205,6 +2205,10 @@
               return deferred.promise;
           };
   
+          ds.getVaultSessionId = function() {
+              return ds.doPostMessage({command: 'getVaultSessionId'});
+          };
+  
           /**
            * Global listener for message callback event
            * This mechanism is not yet supported by Online.
@@ -2436,3 +2440,4 @@
       };
       window.ds = new DataService();
   })(window.Q);
+  

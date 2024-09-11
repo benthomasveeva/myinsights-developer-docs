@@ -450,6 +450,10 @@
             }
         ]
     },
+    "getSFDCSessionID": {
+        "title": "getSFDCSessionID()",
+        "blurb": "Gets the SFDC Session ID and SFDC instance URL. Used to interact with SFDC or authenticate to external systems."
+    },
     "request": {
         "title": "request(config)",
         "blurb": "Returns data requested from the specified external application. This method can be called multiple times to send parallel requests. See Integrating External Data with MyInsights for more information.",
