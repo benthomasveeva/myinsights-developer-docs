@@ -1,5 +1,5 @@
 /*
- *  Veeva MyInsights Library version 242.2.1156
+ *  Veeva MyInsights Library version 242.2.1160
  *  
  *  http://developer.veevacrm.com/
  *  
@@ -1845,59 +1845,6 @@
               return deferred.promise;
           };
   
-          ds.getSSOAccessToken =function(authIdentifier, providerName, oldToken) {
-              var deferred = Q.defer();
-              if(!veevaUtil.isOnline()) {
-                  return ds.doPostMessage({
-                      command: 'getSSOAccessToken',
-                      authIdentifier,
-                      providerName,
-                      oldToken
-                  });
-              } else {
-                  ds.getSFDCSessionID().then(function (resp) {
-                      useSessionIDtoMakeAuthRequest(resp, deferred, authIdentifier, providerName, oldToken);
-                  }, function() {
-                      deferred.reject(createErrorResponse(errorCode.SESSION_ID_UNAVAILABLE, 'Session ID is invalid and system is unable to provide a new Session ID'));
-                  });
-              }
-              return deferred.promise;
-          };
-  
-          function useSessionIDtoMakeAuthRequest (resp, deferred, authIdentifier, providerName, oldToken) {
-              var contentUri = resp.data.instanceUrl + "/services/apexrest/veeva/AccessToken/";
-              var req = {
-                  url: contentUri,
-                  method: "POST",
-                  headers: {
-                      "Authorization": "Bearer " + resp.data.sessionId,
-                      "Content-Type": "application/json"
-                  },
-                  body: {
-                      "authIdentifier": authIdentifier,
-                      "providerName": providerName,
-                      "oldToken": oldToken
-                  }
-              };
-              ds.request(req).then(function(resp) {
-                  if (resp.data && resp.data.body) {
-                      resp.data.token = stripLeadingAndTrailingDoubleQuotes(resp.data.body);
-                  }
-                  deferred.resolve(resp);
-              }, function(error) {
-                  error.data.body = stripLeadingAndTrailingDoubleQuotes(error.data.body);
-                  deferred.reject((createErrorResponse(errorCode.SERVER_ERROR_SSO, error.data.body)));
-              });
-          }
-  
-          function stripLeadingAndTrailingDoubleQuotes(text) {
-              if (text.charAt(0) === '"' && text.charAt(text.length-1) === '"'){
-                  return text.substring(1, text.length-1)
-              } else {
-                  return text;
-              }
-          }
-  
           ds.request = function (requestObject) {
               var deferred = Q.defer();
   
@@ -1912,10 +1859,6 @@
               }
   
               return deferred.promise;
-          };
-  
-          ds.getSFDCSessionID = function() {
-              return ds.doPostMessage({command: 'getSFDCSessionID'});
           };
   
           ds.smartLinking = function(configObject) {
