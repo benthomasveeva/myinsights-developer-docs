@@ -1,6 +1,7 @@
 #!/usr/local/bin/fish
 
 # common
+nvm use 18
 echo "Building common file(s)"
 rollup -c
 
@@ -36,7 +37,7 @@ for d in $vault_simulator_dir
     echo "copying to simulator: $d"
     cp -R ./dist/ $d
 end
-set -f export_zip ~/Documents/MyInsights_Docs.zip
+set -f export_zip ~/Documents/X-Pages_Docs.zip
 cd ./dist
 echo "writing to zip: $export_zip"
 zip -r -FS $export_zip ./
