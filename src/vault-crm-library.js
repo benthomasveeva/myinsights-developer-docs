@@ -1,9 +1,9 @@
 /*
- *  Veeva MyInsights Library version 242.2.1160
+ *  Veeva MyInsights Library version 242.2.1166
  *  
  *  http://developer.veevacrm.com/
  *  
- *  Copyright © 2024 Veeva Systems, Inc. All rights reserved.
+ *  Copyright Â© 2024 Veeva Systems, Inc. All rights reserved.
  *  
  *  My Insights Library is dependent on the Q library, which enables you to work with promises as returns from the My Insights Library methods.
  *  Include the Q library as a script in the custom report package.
@@ -1899,7 +1899,7 @@
                   deferred.reject(invalidBulkPlatformError);
               } else {
                   ds.smartLinking({
-                      object: "Suggestion_vod__c",
+                      object: "suggestion__v",
                       action: actionType ? actionType : 'execute',
                       options: {
                           record: {
@@ -1918,8 +1918,8 @@
           ds.launchMediaForAccount = function(accountId, presentationId, keyMessageMediaFileName) {
               var linkingOptions = {
                   prefill: {
-                      Call2_vod__c: {
-                          Account_vod__c: accountId ? accountId : ''
+                      call2__v: {
+                          account__v: accountId ? accountId : ''
                       }
                   }
               };
@@ -1928,25 +1928,25 @@
               // The ability to pass them in separately has been added for proper error handling
               if (presentationId) {
                   linkingOptions.record = {
-                      Presentation_Id_vod__c: presentationId,
+                      presentation_id__v: presentationId,
                    };
               }
               if (keyMessageMediaFileName) {
                   if (linkingOptions.record) {
-                      linkingOptions.record.Key_Message_vod__c = {
-                          Media_File_Name_vod__c: keyMessageMediaFileName
+                      linkingOptions.record.key_message__v = {
+                          media_file_name__v: keyMessageMediaFileName
                       }
                   } else {
                       linkingOptions.record = {
-                          Key_Message_vod__c: {
-                              Media_File_Name_vod__c: keyMessageMediaFileName
+                          key_message__v: {
+                              media_file_name__v: keyMessageMediaFileName
                           }
                       };
                   }
               }
   
               return ds.smartLinking({
-                  object: "Clm_Presentation_vod__c",
+                  object: "clm_presentation__v",
                   action: "launch",
                   options: linkingOptions
               });
@@ -2383,4 +2383,3 @@
       };
       window.ds = new DataService();
   })(window.Q);
-  
