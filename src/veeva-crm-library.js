@@ -1,5 +1,5 @@
 /*
- *  Veeva MyInsights Library version 242.3.1167
+ *  Veeva MyInsights Library version 243.0.1171
  *  
  *  http://developer.veevacrm.com/
  *  
@@ -788,7 +788,7 @@
               // We will send the HTML Report Id in the case there is more than one
               // MyInsights LWC on the screen
               if (iframeDimensionsToRequest.height !== 0) {
-                  postMessage({
+                  ds.doPostMessage({
                       command: "iframeDimensions",
                       iframeDimensions: iframeDimensionsToRequest
                   });
