@@ -421,7 +421,6 @@ viewExampleBody model entry =
                                 [ Html.Attributes.attribute "value"
                                     (Dict.get entry.name model.tryNowTexts
                                         |> Maybe.withDefault entry.defaultTryNow
-                                        |> makeThereBeAtLeastFourLines
                                     )
                                 , Html.Events.on "codemirrorInput" (JD.map (UserTypedTryNow entry.name) (JD.field "detail" JD.string))
                                 ]
@@ -465,15 +464,6 @@ viewExampleBody model entry =
                     ]
                 ]
         ]
-
-
-makeThereBeAtLeastFourLines : String -> String
-makeThereBeAtLeastFourLines words =
-    let
-        numLines =
-            List.length (String.lines words)
-    in
-    words ++ String.repeat (4 - numLines) "\n"
 
 
 viewExample : Entry Msg -> { name : String, code : String } -> Element Msg
