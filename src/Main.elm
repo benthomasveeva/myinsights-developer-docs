@@ -254,7 +254,7 @@ type PlatformGuess
 
 guessPlatform : Window -> PlatformGuess
 guessPlatform window =
-    if window.resizeCount > 1 || window.height < 10 then
+    if window.resizeCount > 1 || window.height < 200 then
         ProbablyOnline
 
     else
@@ -294,15 +294,15 @@ viewLayout platform model =
         (case platform of
             ProbablyOnline ->
                 Element.row [ width fill, height fill ]
-                    [ viewOnlineSidebar model, viewBody model ]
+                    [ viewOnlineSidebar model, viewOnlineBody model ]
 
             ProbablyIpad ->
                 Element.row [ width fill, height fill ]
-                    [ viewIpadSidebar model, viewBody model ]
+                    [ viewIpadSidebar model, viewIpadBody model ]
 
             ProbablyIphone ->
-                Element.column [ width fill ]
-                    [ viewIphoneHeader model, viewBody model ]
+                Element.column [ width fill, height fill, Element.scrollbarY ]
+                    [ viewIphoneHeader model, viewIphoneBody model ]
         )
 
 
@@ -377,24 +377,40 @@ viewSidebarItem model entry =
         }
 
 
-viewBody : Model -> Element Msg
-viewBody model =
+viewOnlineBody : Model -> Element Msg
+viewOnlineBody =
+    viewBody [ Element.scrollbarY ]
+
+
+viewIpadBody : Model -> Element Msg
+viewIpadBody =
+    viewBody [ Element.scrollbarY ]
+
+
+viewIphoneBody : Model -> Element Msg
+viewIphoneBody =
+    viewBody []
+
+
+viewBody : List (Element.Attribute Msg) -> Model -> Element Msg
+viewBody extraAttrs model =
     model.selectedExample
         |> Maybe.andThen (\entryName -> Dict.get entryName entriesByName)
-        |> Maybe.map (viewExampleBody model)
+        |> Maybe.map (viewExampleBody extraAttrs model)
         |> Maybe.withDefault Element.none
 
 
-viewExampleBody : Model -> Entry Msg -> Element Msg
-viewExampleBody model entry =
+viewExampleBody : List (Element.Attribute Msg) -> Model -> Entry Msg -> Element Msg
+viewExampleBody extraAttrs model entry =
     Element.column
-        [ height fill
-        , width fill
-        , Element.padding Style.margin
-        , Element.spacing Style.margin
-        , Element.scrollbarY
-        , Element.Background.color Style.background
-        ]
+        ([ height fill
+         , width fill
+         , Element.padding Style.margin
+         , Element.spacing Style.margin
+         , Element.Background.color Style.background
+         ]
+            ++ extraAttrs
+        )
         [ entry.docs
         , Components.Card.view "Try Now" <|
             Element.column
