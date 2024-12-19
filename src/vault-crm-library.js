@@ -1,18 +1,4 @@
-/*
- *  Veeva MyInsights Library version 242.2.1166
- *  
- *  http://developer.veevacrm.com/
- *  
- *  Copyright Â© 2024 Veeva Systems, Inc. All rights reserved.
- *  
- *  My Insights Library is dependent on the Q library, which enables you to work with promises as returns from the My Insights Library methods.
- *  Include the Q library as a script in the custom report package.
- *  Q Library License Acknowledgements
- *  Copyright 2009-2017 Kristopher Michael Kowal. All rights reserved.
- *  Q library can be downloaded here https://github.com/kriskowal/q/blob/v1/LICENSE
- *  
- */
-
+// 24R3.0
 (function () {
     'use strict';
     window.QueryBuilder = function () {
@@ -788,7 +774,7 @@
               // We will send the HTML Report Id in the case there is more than one
               // MyInsights LWC on the screen
               if (iframeDimensionsToRequest.height !== 0) {
-                  postMessage({
+                  ds.doPostMessage({
                       command: "iframeDimensions",
                       iframeDimensions: iframeDimensionsToRequest
                   });
