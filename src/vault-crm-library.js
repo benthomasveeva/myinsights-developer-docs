@@ -1,4 +1,18 @@
-// 24R3.0
+/*
+ *  Veeva X-Pages Library version 243.4.1215
+ *
+ *  http://developer.veevacrm.com/
+ *
+ *  Copyright © 2024 Veeva Systems, Inc. All rights reserved.
+ *
+ *  X-Pages Library is dependent on the Q library, which enables you to work with promises as returns from the X-Pages Library methods.
+ *  Include the Q library as a script in the custom report package.
+ *  Q Library License Acknowledgements
+ *  Copyright 2009-2017 Kristopher Michael Kowal. All rights reserved.
+ *  Q library can be downloaded here https://github.com/kriskowal/q/blob/v1/LICENSE
+ *
+ */
+
 (function () {
     'use strict';
     window.QueryBuilder = function () {
@@ -247,7 +261,7 @@
               olAPI.htmlReportUUID = htmlReportIdentifiers.htmlReportUUID;
           });
   
-          // Set timeout in case we are Online with the old non-LEX MyInsights page.
+          // Set timeout in case we are Online with the old non-LEX X-Pages page.
           // We will set a half second timeout since we want to make sure that older
           // reports will still work without the htmlReportId and htmlReportUUID
           setTimeout(function() {
@@ -268,7 +282,7 @@
           function sendIFrameDimensionsToParentWindow() {
               var iframeDimensionsToRequest = getIFrameDimensions();
               // We will send the HTML Report Id in the case there is more than one
-              // MyInsights LWC on the screen
+              // X-Pages LWC on the screen
               if (iframeDimensionsToRequest.height !== 0) {
                   postMessage({
                       command: "iframeDimensions",
@@ -772,7 +786,7 @@
           function sendIFrameDimensionsToParentWindow() {
               var iframeDimensionsToRequest = getIFrameDimensions();
               // We will send the HTML Report Id in the case there is more than one
-              // MyInsights LWC on the screen
+              // X-Pages LWC on the screen
               if (iframeDimensionsToRequest.height !== 0) {
                   ds.doPostMessage({
                       command: "iframeDimensions",
@@ -1831,6 +1845,15 @@
               return deferred.promise;
           };
   
+          ds.getSSOAccessToken = function(authIdentifier, providerName, oldToken) {
+              return ds.doPostMessage({
+                  command: 'getSSOAccessToken',
+                  authIdentifier,
+                  providerName,
+                  oldToken
+              });
+          };
+  
           ds.request = function (requestObject) {
               var deferred = Q.defer();
   
@@ -2019,7 +2042,7 @@
                       "   { accountIds: string[] }\n" +
                       "Here is an example: \n" +
                       '   sendToMySchedule({ accountIds: ["Account_ID_1", "Account_ID_2"]})\n' +
-                      "Read <https://developer.veevacrm.com/api/MyInsightsLibrary/> to learn more."
+                      "Read <https://developer.veevacrm.com/doc/Content/CRM_topics/Vault/x-pages-library.htm> to learn more."
               );
   
               if (config && Array.isArray(config.accountIds)) {
@@ -2369,3 +2392,4 @@
       };
       window.ds = new DataService();
   })(window.Q);
+  

@@ -1,0 +1,1 @@
+ds.getSSOAccessToken("sso_test__c").then(console.log, console.warn);

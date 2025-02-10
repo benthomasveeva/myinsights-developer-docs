@@ -475,6 +475,17 @@
         "title": "getVaultSessionId()",
         "blurb": "Gets the Vault Session ID and Vault instance URL. Used to interact with Vault or authenticate to external systems."
     },
+    "getSSOAccessToken": {
+        "title": "getSSOAccessToken(sso_config_name)", 
+        "blurb": "Gets an access token from a configured SSO provider. Used to authenticate to external systems.",
+        "parameters": [
+            {
+                "name": "sso_config_name",
+                "type": "string", 
+                "description": "The API name of the X-Pages SSO Configuration record to use. Required. "
+            }
+        ]
+    },
     "request": {
         "title": "request(config)",
         "blurb": "Returns data requested from the specified external application. This method can be called multiple times to send parallel requests. See Integrating External Data with MyInsights for more information.",

@@ -1,0 +1,1 @@
+ds.getSSOAccessToken("test_sso__c", "Okta").then(console.log, console.warn);
