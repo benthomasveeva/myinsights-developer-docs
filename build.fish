@@ -42,3 +42,14 @@ cd ./dist
 echo "writing to zip: $export_zip"
 zip -r -FS $export_zip ./
 cd ..
+
+# Experimental Vault CRM
+# We know we're running after the normal Vault, so just copy the files
+cp ./dist/codemirror-element.js ./dist_alt/codemirror-element.js
+cp ./dist/main.js ./dist_alt/main.js
+rollup --config ./rollup-newlibrary.config.mjs
+set -f export_zip ~/Documents/X-Pages_Experimental.zip
+echo "writing to zip: $export_zip"
+cd ./dist_alt
+zip -r -FS $export_zip ./
+cd ..
