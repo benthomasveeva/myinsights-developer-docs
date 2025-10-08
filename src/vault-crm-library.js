@@ -1,9 +1,9 @@
 /*
- *  Veeva X-Pages Library version 243.4.1215
+ *  Veeva X-Pages Library version 251.0.20
  *
  *  http://developer.veevacrm.com/
  *
- *  Copyright © 2024 Veeva Systems, Inc. All rights reserved.
+ *  Copyright Â© 2024 Veeva Systems, Inc. All rights reserved.
  *
  *  X-Pages Library is dependent on the Q library, which enables you to work with promises as returns from the X-Pages Library methods.
  *  Include the Q library as a script in the custom report package.
@@ -586,7 +586,7 @@
               return deferred.promise;
           };
   
-          olAPI.getPicklistValueLabels = function (object, field) {
+          olAPI.getPicklistValueLabels = function (object, field, includeInactive) {
               numQueriesExecuted += 1;
               var deferred = Q.defer();
   
@@ -596,6 +596,7 @@
                   command: "getPicklistValueLabels",
                   object: object,
                   field: field,
+                  includeInactive: includeInactive,
                   deferredId: deferredId
               };
               delegateOnlineRequest(newConfig, deferredId, deferred);
@@ -719,7 +720,7 @@
               return deferred.promise;
           };
   
-          olAPI.getRecordTypeLabels = function(objectName) {
+          olAPI.getObjectTypes = olAPI.getObjectTypeLabels = function(objectName, includeInactive = false) {
               numQueriesExecuted += 1;
               var deferred = Q.defer();
   
@@ -727,14 +728,15 @@
                   var deferredId =
                       "callback_queued_" + Date.now() + "_" + numQueriesExecuted;
                   var queryConfig = {
-                      command: "getRecordTypeLabels",
+                      command: "getObjectTypes",
                       object: objectName,
+                      includeInactive: includeInactive,
                       deferredId: deferredId
                   };
   
                   delegateOnlineRequest(queryConfig, deferredId, deferred);
               } else {
-                  deferred.reject(onlineErrorResponse(errorCode.NO_PARAMETER, "getRecordTypeLabels called with no parameter"));
+                  deferred.reject(onlineErrorResponse(errorCode.NO_PARAMETER, "getObjectTypes called with no parameter"));
               }
   
               return deferred.promise;
@@ -974,7 +976,7 @@
                       var queryObject = queryConfig.object;
                       queryConfig.picklists.forEach(function(picklist) {
                           var promise =
-                              ds.getPicklistValueLabels(queryObject, picklist).then(function (picklistResp) {
+                              ds.getPicklistValueLabels(queryObject, picklist, true).then(function (picklistResp) {
                                   var currentPicklistResp = picklistResp[queryObject];
                                   return currentPicklistResp;
                               });
@@ -1604,19 +1606,21 @@
   
            object - API Name of the object
            field - API Name of the picklist field
+           includeInactive - boolean controlling whether inactive picklist values are returned
            */
-          ds.getPicklistValueLabels = function (object, field) {
+          ds.getPicklistValueLabels = function (object, field, includeInactive) {
               var deferred = Q.defer();
   
               if(ds.queryRunning) {
                   ds.queriesQueue.push({
                       object: object,
                       field: field,
+                      includeInactive: includeInactive,
                       deferred: deferred,
                       type: 'getPicklistValueLabels'
                   });
               } else {
-                  var req = constructRequest('getPicklistValueLabels', object, field);
+                  var req = constructRequest('getPicklistValueLabels', object, field, includeInactive);
                   ds.delegateQueryRequest(req, deferred);
               }
   
@@ -1672,8 +1676,8 @@
                       ds.getObjectMetadata(next.config).then(function(resp) {
                           next.deferred.resolve(resp);
                       }, genericQueryErrorHandler(next.deferred));
-                  } else if(next.type === 'getRecordTypeLabels' || next.type === 'getRecordTypeLabels_ol') {
-                      ds.getRecordTypeLabels(next.config).then(function(resp) {
+                  } else if(next.type === 'getObjectTypes' || next.type === 'getObjectTypes_ol') {
+                      ds.getObjectTypes(next.config, next.includeInactive).then(function(resp) {
                           next.deferred.resolve(resp);
                       }, genericQueryErrorHandler(next.deferred));
                   } else if (next.type === 'getFieldLabels' || next.type === 'getFieldLabels_ol') {
@@ -1685,7 +1689,7 @@
                           next.deferred.resolve(resp);
                       }, genericQueryErrorHandler(next.deferred));
                   } else if (next.type === 'getPicklistValueLabels' || next.type === 'getPicklistValueLabels_ol') {
-                      ds.getPicklistValueLabels(next.object, next.field).then(function (resp) {
+                      ds.getPicklistValueLabels(next.object, next.field, next.includeInactive).then(function (resp) {
                           next.deferred.resolve(resp);
                       }, genericQueryErrorHandler(next.deferred));
                   } else if (next.type === 'getDataForCurrentObject' || next.type === 'getDataForCurrentObject_ol') {
@@ -2001,17 +2005,18 @@
               return deferred.promise;
           };
   
-          ds.getRecordTypeLabels = function(objectName) {
+          ds.getObjectTypes = ds.getObjectTypeLabels = function(objectName, includeInactive = false) {
               var deferred = Q.defer();
   
               if(ds.queryRunning) {
                   ds.queriesQueue.push({
                       config: objectName,
+                      includeInactive: includeInactive,
                       deferred: deferred,
-                      type: 'getRecordTypeLabels'
+                      type: 'getObjectTypes'
                   });
               } else {
-                  var req = constructRequest('getRecordTypeLabels', objectName);
+                  var req = constructRequest('getObjectTypes', objectName, includeInactive);
                   ds.delegateQueryRequest(req, deferred);
               }
   
@@ -2392,4 +2397,3 @@
       };
       window.ds = new DataService();
   })(window.Q);
-  

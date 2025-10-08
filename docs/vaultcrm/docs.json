@@ -1,554 +1,559 @@
 {
-    "getDataForCurrentObject": {
-        "title": "getDataForCurrentObject(object,field)",
-        "blurb": "Asynchronously fetches a field from the current object.",
-        "parameters": [
-            {
-                "name": "object",
-                "type": "string",
-                "description": "The API name of the object that you wish to query."
-            },
-            {
-                "name": "field",
-                "type": "string",
-                "description": "The API name of the field that you wish to query."
-            }
-        ]
-    },
-    "queryRecord": {
-        "title": "queryRecord(config)",
-        "blurb": "This method returns the queried data without adding additional metadata (i.e., object labels, field labels etc.) in the returned results. Fields must only be specified once per query or an error is returned.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the object that you wish to query."
-            },
-            {
-                "name": "config.fields",
-                "type": "Array of strings",
-                "description": "The API names of the fields that you wish to query."
-            },
-            {
-                "name": "config.where",
-                "type": "string",
-                "description": "Optional. Do not include if empty. The where statement to use, excluding the word 'where'."
-            },
-            {
-                "name": "config.sort",
-                "type": "Array of strings",
-                "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
-            },
-            {
-                "name": "config.limit",
-                "type": "integer",
-                "description": "Optional. The maximum number of records to return."
-            }
-        ]
-    },
-    "runQuery": {
-        "title": "runQuery(config)",
-        "blurb": "This method returns the queried data with additional metadata (i.e., object labels, field labels etc.) in the returned results. Fields must only be specified once per query or an error is returned.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the object that you wish to query."
-            },
-            {
-                "name": "config.fields",
-                "type": "Array of strings",
-                "description": "The API names of the fields that you wish to query."
-            },
-            {
-                "name": "config.where",
-                "type": "string",
-                "description": "Optional. Do not include if empty. The where statement to use, excluding the word 'where'."
-            },
-            {
-                "name": "config.sort",
-                "type": "Array of strings",
-                "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
-            },
-            {
-                "name": "config.limit",
-                "type": "integer",
-                "description": "Optional. The maximum number of records to return."
-            }
-        ]
-    },
-    "getInStatement": {
-        "title": "getInStatement(values)",
-        "blurb": "Generate an 'IN' statement for the where clause of a query.",
-        "parameters": [
-            {
-                "name": "ids",
-                "type": "string",
-                "description": "The values to use in the IN statement. These are likely IDs."
-            }
-        ],
-        "return": "A string 'IN' statement for including in the 'WHERE' statement of query."
-    },
-    "getAlignedTerritories": {
-        "title": "getAlignedTerritories(config)",
-        "blurb": "Returns a list of aligned territories for the current user. This can include the child territories for each aligned territory.",
-        "parameters": [
-            {
-                "name": "config.includeChildren",
-                "type": "boolean",
-                "description": "Optional. Determines whether to include data for the child territories for each aligned territory."
-            }
-        ]
-    },
-    "getVeevaMessagesWithDefault": {
-        "title": "getVeevaMessagesWithDefault(tokens, localeKey)",
-        "blurb": "The getVeevaMessagesWithDefault method returns the translated value of each of the tokens passed in to the language specified by the localeKey. The tokens must be case sensitive and exactly match the Message record.",
-        "parameters": [
-            {
-                "name": "tokens",
-                "type": "Array of objects",
-                "description": "A list of tokens representing the messages to be translated."
-            },
-            {
-                "name": "tokens[n].msgCategory",
-                "type": "string",
-                "description": "The category of the message to translate."
-            },
-            {
-                "name": "tokens[n].msgName",
-                "type": "string",
-                "description": "The name of the message to translate."
-            },
-            {
-                "name": "localeKey",
-                "type": "string",
-                "description": "Optional. Will use the locale of the current user when missing."
-            }
-        ]
-    },
-    "getMessages": {
-        "title": "getMessages(tokens)",
-        "blurb": "The getMessages method returns the translated value of each of the tokens passed in to the user's language.",
-        "parameters": [
-            {
-                "name": "tokens",
-                "type": "Array of objects",
-                "description": "A list of tokens representing the messages to be translated."
-            },
-            {
-                "name": "tokens[n].group",
-                "type": "string",
-                "description": "The category/group of the message to translate."
-            },
-            {
-                "name": "tokens[n].name",
-                "type": "string",
-                "description": "The name of the message to translate."
-            }
-        ]
-    },
-    "getAvailableObjects": {
-        "title": "getAvailableObjects()",
-        "blurb": "This method retrieves a list of objects for which the user has Read permissions to in their org."
-    },
-    "getObjectMetadata": {
-        "title": "getObjectMetadata(config)",
-        "blurb": "The getObjectMetadata method retrieves the list of fields the user has Read permissions to in a specific object.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the object that you wish to query metadata for."
-            }
-        ]
-    },
-    "getRecordTypeLabels": {
-        "title": "getRecordTypeLabels(objectName)",
-        "blurb": "The getRecordTypeLabels method returns the record type's API name and record type translated label.",
-        "parameters": [
-            {
-                "name": "objectName",
-                "type": "string",
-                "description": "The API name of the object that you wish to query metadata for."
-            }
-        ]
-    },
-    "getObjectLabels": {
-        "title": "getObjectLabels(objectNames)",
-        "blurb": "Returns the labels for the list of object names passed in.",
-        "parameters": [
-            {
-                "name": "objectNames",
-                "type": "Array of strings",
-                "description": "The API names of the objects that you wish to query metadata for."
-            }
-        ]
-    },
-    "getFieldLabels": {
-        "title": "getFieldLabels(config)",
-        "blurb": "Return the labels for the list of fields passed in.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the object that you wish to query metadata for."
-            },
-            {
-                "name": "config.fields",
-                "type": "Array of strings",
-                "description": "The API names of the fields whose labels you wish to query."
-            }
-        ]
-    },
-    "getPicklistValueLabels": {
-        "title": "getPicklistValueLabels(object, field)",
-        "blurb": "getPicklistValueLabels returns the translated label for each of the picklist values of the specified field.",
-        "parameters": [
-            {
-                "name": "object",
-                "type": "string",
-                "description": "The API name of the object that you wish to query metadata for."
-            },
-            {
-                "name": "field",
-                "type": "string",
-                "description": "The API name of the field whose picklist labels you wish to query."
-            }
-        ]
-    },
-    "queryVDSRecord": {
-        "title": "queryVDSRecord(config)",
-        "blurb": "Returns data records from Nitro. When querying Nitro data from MyInsights content in the browser, date fields are returned as Unix timestamps, not ISO8601 date strings.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the Nitro table that you wish to query."
-            },
-            {
-                "name": "config.fields",
-                "type": "Array of strings",
-                "description": "The API name of the fields that you wish to query."
-            },
-            {
-                "name": "config.where",
-                "type": "string",
-                "description": "Optional. Do not include if empty. The where statement, without the word 'where'."
-            },
-            {
-                "name": "config.sort",
-                "type": "Array of strings",
-                "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
-            },
-            {
-                "name": "config.limit",
-                "type": "integer",
-                "description": "Optional. The maximum number of records to return."
-            }
-        ]
-    },
-    "queryDataEngine": {
-        "title": "queryDataEngine(config)",
-        "blurb": "Returns large data sets from the CRM Data Engine. This method leverages CRM Data Engine’s ability to handle complex queries, including group-by logic and calculation of formula fields. By using this method, report creators can improve performance of the report and reduce the amount of JavaScript they need to write to process the data.",
-        "parameters": [
-            {
-                "name": "config.table",
-                "type": "string",
-                "description": "The API name of the Data Engine table that you wish to query."
-            },
-            {
-                "name": "config.fields",
-                "type": "Array of strings",
-                "description": "An array of fields to query. These fields can include dimensions (string values calculated from expressions) and metrics (number values calculated from expressions)."
-            },
-            {
-                "name": "config.where",
-                "type": "string",
-                "description": "Optional. Do not include if empty. The where statement, without the word 'where'."
-            },
-            {
-                "name": "config.sort",
-                "type": "Array of strings",
-                "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
-            },
-            {
-                "name": "config.limit",
-                "type": "integer",
-                "description": "Optional. The maximum number of records to return."
-            }
-        ]
-    },
-    "getDataEngineTables": {
-        "title": "getDataEngineTables()",
-        "blurb": "Returns a list of all tables that can be queried by the current user."
-    },
-    "getDataEngineTableMetadata": {
-        "title": "getDataEngineTableMetadata(tableName)",
-        "blurb": "Returns the metadata of a specific table in the CRM Data Engine.",
-        "parameters": [
-            {
-                "name": "tableName",
-                "type": "string",
-                "description": "The API name of the Data Engine table that you wish to query metadata for."
-            }
-        ]
-    },
-    "getMediaImagesForSlides": {
-        "title": "getMediaImagesForSlides(slideIds)",
-        "blurb": "Returns the thumbnail and preview image URLs for specific CLM slides.",
-        "parameters": [
-            {
-                "name": "slideIds",
-                "type": "Array of strings",
-                "description": "IDs of Key Messages records."
-            }
-        ]
-    },
-    "getMediaImagesForPresentations": {
-        "title": "getMediaImagesForPresentations(presIds)",
-        "blurb": "Returns the thumbnail and preview image URLS for the first slide in specific CLM presentations.",
-        "parameters": [
-            {
-                "name": "presIds",
-                "type": "Array of strings",
-                "description": "IDs of CLM Presentation records."
-            }
-        ]
-    },
-    "getFirstSlideForPresentations": {
-        "title": "getFirstSlideForPresentations(presIds)",
-        "blurb": "getFirstSlideForReturns the name, record ID, and media file name for the first slide in specific CLM presentations.Presentations",
-        "parameters": [
-            {
-                "name": "presIds",
-                "type": "Array of strings",
-                "description": "IDs of CLM Presentation records."
-            }
-        ]
-    },
-    "newRecord": {
-        "title": "newRecord(config)",
-        "blurb": "The newRecord method displays the native interface of the object within Veeva CRM.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the target object."
-            },
-            {
-                "name": "config.fields",
-                "type": "object",
-                "description": "An object, where the keys are the API names of the fields to send. Only certain fields are accepted."
-            }
-        ],
-        "return": "When the request is successful, the application displays the native interface."
-    },
-    "viewRecord": {
-        "title": "viewRecord(config)",
-        "blurb": "The viewRecord method navigates from a MyInsights tab in one record/location to a target record/location. If the target record/location is an Account with one or more MyInsights tabs, developers can specify a target tab to navigate to directly. Users can navigate back to the original MyInsights report by selecting back, returning to their last viewed screen.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the target object."
-            },
-            {
-                "name": "config.fields",
-                "type": "string",
-                "description": "An object, where the keys are the API names of the fields to send. Only certain fields are accepted."
-            },
-            {
-                "name": "config.target",
-                "type": "object or Array of objects",
-                "description": "An object identifying the MyInsights tab to navigate to, or an Array of such objects."
-            }
-        ],
-        "return": "When the request is successful, the application displays the native interface."
-    },
-    "viewSection": {
-        "title": "viewSection(config)",
-        "blurb": "The viewSection method navigates from one MyInsights tab to another within the current record/location. This method is only supported for account-level or territory-level content.",
-        "parameters": [
-            {
-                "name": "config.target",
-                "type": "object or Array of objects",
-                "description": "An object identifying the MyInsights tab to navigate to, or an Array of such objects."
-            }
-        ],
-        "return": "Returns a Promise that resolves successfully if the user is successfully navigated."
-    },
-    "executeSuggestionAction": {
-        "title": "executeSuggestionAction(suggestionId, actionType, bulkExecution)",
-        "blurb": "The executeSuggestionAction method enables the execution, completion, and dismissal of suggestions.",
-        "parameters": [
-            {
-                "name": "suggestionId",
-                "type": "string",
-                "description": "The ID of the Suggestion to execute, mark as complete, or dismiss."
-            },
-            {
-                "name": "actionType",
-                "type": "'complete' or 'dismiss' or 'execute'",
-                "description": "Optional. Defaults to 'execute'. Whether the Suggestion should be executed, marked as complete, or dismissed."
-            },
-            {
-                "name": "bulkExecution",
-                "type": "'none' or 'allUser' or 'allAccount'",
-                "description": "Optional. Only applies when actionType = 'execute' and the Suggestion is a Call suggestion. Determines how many Suggestions are shown in the My Schedule UI."
-            }
-        ],
-        "return": "When the request is successful, the desired action is made against the specified suggestion. The success flag in the returned JavaScript payload indicates the suggestion was marked as Actioned."
-    },
-    "launchMediaForAccount": {
-        "title": "launchMediaForAccount(accountId, presId, keyMessageMediaFileName)",
-        "blurb": "The launchMediaForAccount method enables launching a specific key message in a CLM presentation directly from MyInsights content or launching the CLM media library.",
-        "parameters": [
-            {
-                "name": "accountId",
-                "type": "string",
-                "description": "The ID of the Account."
-            },
-            {
-                "name": "presId",
-                "type": "string",
-                "description": "Optional. The ID of the CLM Presentation that you wish to open."
-            },
-            {
-                "name": "keyMessageMediaFileName",
-                "type": "string",
-                "description": "Must be provided if and only if presId is provided. The Media_File_Name field of the Key Message that you wish to launch."
-            }
-        ],
-        "return": "When the request is successful, the specified CLM presentation displays. If the keyMessageMediaFileName parameter is populated with a valid Key Message, the presentation opens directly to that Key Message. If the presentationId and keyMessageMediaFileName parameters are blank, a successful request displays the CLM Library instead, enabling users to select the presentation to display."
-    },
-    "sendToMySchedule": {
-        "title": "sendToMySchedule(config)",
-        "blurb": "Displays the My Schedule screen with the specified accounts selected for users to schedule calls with. Users can return to the MyInsights content via the Back button. This method is supported for the Territory, Account, and Account Plan entry points.",
-        "parameters": [
-            {
-                "name": "config.accountIds",
-                "type": "Array of strings",
-                "description": "An array of Account IDs. Must not be mobile IDs for online content. Can be IDs or mobile IDs for content on other platforms. Can be empty."
-            }
-        ],
-        "return": "Returns a Promise that resolves when the user returns to this page."
-    },
-    "createRecord": {
-        "title": "createRecord(config)",
-        "blurb": "Creates a record for the specified object directly from MyInsights content. See Inline Editing for MyInsights Content for more information. MyInsights content does not support using browser APIs for storage, for example, Web Storage and IndexedDB. Instead, developers can save data to MyInsights_Data_vod records.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the object to create."
-            },
-            {
-                "name": "config.fields",
-                "type": "object",
-                "description": "Key-values pair of the API names of fields and the values to store in each field."
-            }
-        ],
-        "return": "Returns a Promise that resolves with the ID of the created record."
-    },
-    "updateRecord": {
-        "title": "updateRecord(config)",
-        "blurb": "Updates fields on the specified record directly from MyInsights content. See Inline Editing for MyInsights Content for more information.",
-        "parameters": [
-            {
-                "name": "config.object",
-                "type": "string",
-                "description": "The API name of the object to update."
-            },
-            {
-                "name": "config.id",
-                "type": "string",
-                "description": "The ID of the object to update."
-            },
-            {
-                "name": "config.fields",
-                "type": "object",
-                "description": "Key-values pair of the API names of fields and the values to store in each field."
-            }
-        ]
-    },
-    "getVaultSessionId": {
-        "title": "getVaultSessionId()",
-        "blurb": "Gets the Vault Session ID and Vault instance URL. Used to interact with Vault or authenticate to external systems."
-    },
-    "getSSOAccessToken": {
-        "title": "getSSOAccessToken(sso_config_name)", 
-        "blurb": "Gets an access token from a configured SSO provider. Used to authenticate to external systems.",
-        "parameters": [
-            {
-                "name": "sso_config_name",
-                "type": "string", 
-                "description": "The API name of the X-Pages SSO Configuration record to use. Required. "
-            }
-        ]
-    },
-    "request": {
-        "title": "request(config)",
-        "blurb": "Returns data requested from the specified external application. This method can be called multiple times to send parallel requests. See Integrating External Data with MyInsights for more information.",
-        "parameters": [
-            {
-                "name": "config.url",
-                "type": "string",
-                "description": "The URL to send the request to."
-            },
-            {
-                "name": "config.method",
-                "type": "string",
-                "description": "Optional. Defaults to 'GET'. The HTTP method to use for the request."
-            },
-            {
-                "name": "config.headers",
-                "type": "object",
-                "description": "Optional. An object where the key/value pairs are the headers to include in the request. All values must be strings."
-            },
-            {
-                "name": "config.body",
-                "type": "string or object",
-                "description": "Optional. The body data to include in the request."
-            },
-            {
-                "name": "config.timeout",
-                "type": "number",
-                "description": "Optional. Default is 30. The number of seconds to wait for a response before expiring the request."
-            },
-            {
-                "name": "config.expect",
-                "type": "'text' or 'blob'",
-                "description": "Optional. Defaults to 'text'. Determines whether the response should be interpreted as text or a binary file."
-            }
-        ]
-    },
-    "getCurrentPosition": {
-        "title": "getCurrentPosition()",
-        "blurb": "Returns the geographic location of the user’s device, enabling developers to use the location values to create content which help users plan activities, for example, by marking the device’s location on a map (for example, Google Maps), comparing and displaying distances to account locations, or creating a location log. See Requesting Location via MyInsights for more information.",
-        "return": "When the request is successful, the promise returns the results of the query, including: Timestamp, Latitude, Longitude, Accuracy"
-    },
-    "refreshOrder": {
-        "title": "refreshOrder()",
-        "blurb": "This method can be embedded in a button or link to display the Order Lines tab for an order and recalculate the order based on the pricing rules. To avoid unexpected navigation away from the visualization, developers should make sure this method is embedded in an obviously actionable element.",
-        "return": "Returns a Promise that resolves when the user is navigated to the Order Lines tab."
-    },
-    "getFeedbackData": {
-        "title": "getFeedbackData()",
-        "blurb": "This method retrieves data about upcoming changes to the current territory."
-    },
-    "getAttendeeDataForCurrentCall": {
-        "title": "getAttendeeDataForCurrentCall()",
-        "blurb": "Returns data about the accounts added to the Attendees section of the specified call report."
-    },
-    "setIOSThirdPartyCookie": {
-        "title": "setIOSThirdPartyCookie(domain)",
-        "blurb": "This method allows developers to integrate third-party data sources into MyInsights content when the third-party data sources use cookies for authentication.",
-        "parameters": [
-            {
-                "name": "domain",
-                "type": "string",
-                "description": "The domain to set the placeholder cookie for."
-            }
-        ]
-    }
+  "getDataForCurrentObject": {
+    "title": "getDataForCurrentObject(object,field)",
+    "blurb": "Asynchronously fetches a field from the current object.",
+    "parameters": [
+      {
+        "name": "object",
+        "type": "string",
+        "description": "The API name of the object that you wish to query."
+      },
+      {
+        "name": "field",
+        "type": "string",
+        "description": "The API name of the field that you wish to query."
+      }
+    ]
+  },
+  "queryRecord": {
+    "title": "queryRecord(config)",
+    "blurb": "This method returns the queried data without adding additional metadata (i.e., object labels, field labels etc.) in the returned results. Fields must only be specified once per query or an error is returned.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the object that you wish to query."
+      },
+      {
+        "name": "config.fields",
+        "type": "Array of strings",
+        "description": "The API names of the fields that you wish to query."
+      },
+      {
+        "name": "config.where",
+        "type": "string",
+        "description": "Optional. Do not include if empty. The where statement to use, excluding the word 'where'."
+      },
+      {
+        "name": "config.sort",
+        "type": "Array of strings",
+        "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
+      },
+      {
+        "name": "config.limit",
+        "type": "integer",
+        "description": "Optional. The maximum number of records to return."
+      }
+    ]
+  },
+  "runQuery": {
+    "title": "runQuery(config)",
+    "blurb": "This method returns the queried data with additional metadata (i.e., object labels, field labels etc.) in the returned results. Fields must only be specified once per query or an error is returned.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the object that you wish to query."
+      },
+      {
+        "name": "config.fields",
+        "type": "Array of strings",
+        "description": "The API names of the fields that you wish to query."
+      },
+      {
+        "name": "config.where",
+        "type": "string",
+        "description": "Optional. Do not include if empty. The where statement to use, excluding the word 'where'."
+      },
+      {
+        "name": "config.sort",
+        "type": "Array of strings",
+        "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
+      },
+      {
+        "name": "config.limit",
+        "type": "integer",
+        "description": "Optional. The maximum number of records to return."
+      }
+    ]
+  },
+  "getInStatement": {
+    "title": "getInStatement(values)",
+    "blurb": "Generate an 'IN' statement for the where clause of a query.",
+    "parameters": [
+      {
+        "name": "ids",
+        "type": "string",
+        "description": "The values to use in the IN statement. These are likely IDs."
+      }
+    ],
+    "return": "A string 'IN' statement for including in the 'WHERE' statement of query."
+  },
+  "getAlignedTerritories": {
+    "title": "getAlignedTerritories(config)",
+    "blurb": "Returns a list of aligned territories for the current user. This can include the child territories for each aligned territory.",
+    "parameters": [
+      {
+        "name": "config.includeChildren",
+        "type": "boolean",
+        "description": "Optional. Determines whether to include data for the child territories for each aligned territory."
+      }
+    ]
+  },
+  "getVeevaMessagesWithDefault": {
+    "title": "getVeevaMessagesWithDefault(tokens, localeKey)",
+    "blurb": "The getVeevaMessagesWithDefault method returns the translated value of each of the tokens passed in to the language specified by the localeKey. The tokens must be case sensitive and exactly match the Message record.",
+    "parameters": [
+      {
+        "name": "tokens",
+        "type": "Array of objects",
+        "description": "A list of tokens representing the messages to be translated."
+      },
+      {
+        "name": "tokens[n].msgCategory",
+        "type": "string",
+        "description": "The category of the message to translate."
+      },
+      {
+        "name": "tokens[n].msgName",
+        "type": "string",
+        "description": "The name of the message to translate."
+      },
+      {
+        "name": "localeKey",
+        "type": "string",
+        "description": "Optional. Will use the locale of the current user when missing."
+      }
+    ]
+  },
+  "getMessages": {
+    "title": "getMessages(tokens)",
+    "blurb": "The getMessages method returns the translated value of each of the tokens passed in to the user's language.",
+    "parameters": [
+      {
+        "name": "tokens",
+        "type": "Array of objects",
+        "description": "A list of tokens representing the messages to be translated."
+      },
+      {
+        "name": "tokens[n].group",
+        "type": "string",
+        "description": "The category/group of the message to translate."
+      },
+      {
+        "name": "tokens[n].name",
+        "type": "string",
+        "description": "The name of the message to translate."
+      }
+    ]
+  },
+  "getAvailableObjects": {
+    "title": "getAvailableObjects()",
+    "blurb": "This method retrieves a list of objects for which the user has Read permissions to in their org."
+  },
+  "getObjectMetadata": {
+    "title": "getObjectMetadata(config)",
+    "blurb": "The getObjectMetadata method retrieves the list of fields the user has Read permissions to in a specific object.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the object that you wish to query metadata for."
+      }
+    ]
+  },
+  "getObjectTypes": {
+    "title": "getObjectTypes(objectName, includeInactive)",
+    "blurb": "The getObjectType method returns the object type's id, API name, and translated label.",
+    "parameters": [
+      {
+        "name": "objectName",
+        "type": "string",
+        "description": "The API name of the object that you wish to query metadata for."
+      },
+      {
+        "name": "includeInactive",
+        "type": "boolean",
+        "description": "Optional. If true, returns both active and inactive object type information. Otherwise, only returns active object types."
+      }
+    ]
+  },
+  "getObjectLabels": {
+    "title": "getObjectLabels(objectNames)",
+    "blurb": "Returns the labels for the list of object names passed in.",
+    "parameters": [
+      {
+        "name": "objectNames",
+        "type": "Array of strings",
+        "description": "The API names of the objects that you wish to query metadata for."
+      }
+    ]
+  },
+  "getFieldLabels": {
+    "title": "getFieldLabels(config)",
+    "blurb": "Return the labels for the list of fields passed in.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the object that you wish to query metadata for."
+      },
+      {
+        "name": "config.fields",
+        "type": "Array of strings",
+        "description": "The API names of the fields whose labels you wish to query."
+      }
+    ]
+  },
+  "getPicklistValueLabels": {
+    "title": "getPicklistValueLabels(object, field)",
+    "blurb": "getPicklistValueLabels returns the translated label for each of the picklist values of the specified field.",
+    "parameters": [
+      {
+        "name": "object",
+        "type": "string",
+        "description": "The API name of the object that you wish to query metadata for."
+      },
+      {
+        "name": "field",
+        "type": "string",
+        "description": "The API name of the field whose picklist labels you wish to query."
+      }
+    ]
+  },
+  "queryVDSRecord": {
+    "title": "queryVDSRecord(config)",
+    "blurb": "Returns data records from Nitro. When querying Nitro data from MyInsights content in the browser, date fields are returned as Unix timestamps, not ISO8601 date strings.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the Nitro table that you wish to query."
+      },
+      {
+        "name": "config.fields",
+        "type": "Array of strings",
+        "description": "The API name of the fields that you wish to query."
+      },
+      {
+        "name": "config.where",
+        "type": "string",
+        "description": "Optional. Do not include if empty. The where statement, without the word 'where'."
+      },
+      {
+        "name": "config.sort",
+        "type": "Array of strings",
+        "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
+      },
+      {
+        "name": "config.limit",
+        "type": "integer",
+        "description": "Optional. The maximum number of records to return."
+      }
+    ]
+  },
+  "queryDataEngine": {
+    "title": "queryDataEngine(config)",
+    "blurb": "Returns large data sets from the CRM Data Engine. This method leverages CRM Data Engine’s ability to handle complex queries, including group-by logic and calculation of formula fields. By using this method, report creators can improve performance of the report and reduce the amount of JavaScript they need to write to process the data.",
+    "parameters": [
+      {
+        "name": "config.table",
+        "type": "string",
+        "description": "The API name of the Data Engine table that you wish to query."
+      },
+      {
+        "name": "config.fields",
+        "type": "Array of strings",
+        "description": "An array of fields to query. These fields can include dimensions (string values calculated from expressions) and metrics (number values calculated from expressions)."
+      },
+      {
+        "name": "config.where",
+        "type": "string",
+        "description": "Optional. Do not include if empty. The where statement, without the word 'where'."
+      },
+      {
+        "name": "config.sort",
+        "type": "Array of strings",
+        "description": "Optional. The API names and directions to sort the results by. e.g. ['Call_Date_vod__c DESC']"
+      },
+      {
+        "name": "config.limit",
+        "type": "integer",
+        "description": "Optional. The maximum number of records to return."
+      }
+    ]
+  },
+  "getDataEngineTables": {
+    "title": "getDataEngineTables()",
+    "blurb": "Returns a list of all tables that can be queried by the current user."
+  },
+  "getDataEngineTableMetadata": {
+    "title": "getDataEngineTableMetadata(tableName)",
+    "blurb": "Returns the metadata of a specific table in the CRM Data Engine.",
+    "parameters": [
+      {
+        "name": "tableName",
+        "type": "string",
+        "description": "The API name of the Data Engine table that you wish to query metadata for."
+      }
+    ]
+  },
+  "getMediaImagesForSlides": {
+    "title": "getMediaImagesForSlides(slideIds)",
+    "blurb": "Returns the thumbnail and preview image URLs for specific CLM slides.",
+    "parameters": [
+      {
+        "name": "slideIds",
+        "type": "Array of strings",
+        "description": "IDs of Key Messages records."
+      }
+    ]
+  },
+  "getMediaImagesForPresentations": {
+    "title": "getMediaImagesForPresentations(presIds)",
+    "blurb": "Returns the thumbnail and preview image URLS for the first slide in specific CLM presentations.",
+    "parameters": [
+      {
+        "name": "presIds",
+        "type": "Array of strings",
+        "description": "IDs of CLM Presentation records."
+      }
+    ]
+  },
+  "getFirstSlideForPresentations": {
+    "title": "getFirstSlideForPresentations(presIds)",
+    "blurb": "getFirstSlideForReturns the name, record ID, and media file name for the first slide in specific CLM presentations.Presentations",
+    "parameters": [
+      {
+        "name": "presIds",
+        "type": "Array of strings",
+        "description": "IDs of CLM Presentation records."
+      }
+    ]
+  },
+  "newRecord": {
+    "title": "newRecord(config)",
+    "blurb": "The newRecord method displays the native interface of the object within Veeva CRM.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the target object."
+      },
+      {
+        "name": "config.fields",
+        "type": "object",
+        "description": "An object, where the keys are the API names of the fields to send. Only certain fields are accepted."
+      }
+    ],
+    "return": "When the request is successful, the application displays the native interface."
+  },
+  "viewRecord": {
+    "title": "viewRecord(config)",
+    "blurb": "The viewRecord method navigates from a MyInsights tab in one record/location to a target record/location. If the target record/location is an Account with one or more MyInsights tabs, developers can specify a target tab to navigate to directly. Users can navigate back to the original MyInsights report by selecting back, returning to their last viewed screen.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the target object."
+      },
+      {
+        "name": "config.fields",
+        "type": "string",
+        "description": "An object, where the keys are the API names of the fields to send. Only certain fields are accepted."
+      },
+      {
+        "name": "config.target",
+        "type": "object or Array of objects",
+        "description": "An object identifying the MyInsights tab to navigate to, or an Array of such objects."
+      }
+    ],
+    "return": "When the request is successful, the application displays the native interface."
+  },
+  "viewSection": {
+    "title": "viewSection(target)",
+    "blurb": "The viewSection method navigates from one MyInsights tab to another within the current record/location. This method is only supported for account-level or territory-level content.",
+    "parameters": [
+      {
+        "name": "target",
+        "type": "object or Array of objects",
+        "description": "An object identifying the MyInsights tab to navigate to, or an Array of such objects."
+      }
+    ],
+    "return": "Returns a Promise that resolves successfully if the user is successfully navigated."
+  },
+  "executeSuggestionAction": {
+    "title": "executeSuggestionAction(suggestionId, actionType, bulkExecution)",
+    "blurb": "The executeSuggestionAction method enables the execution, completion, and dismissal of suggestions.",
+    "parameters": [
+      {
+        "name": "suggestionId",
+        "type": "string",
+        "description": "The ID of the Suggestion to execute, mark as complete, or dismiss."
+      },
+      {
+        "name": "actionType",
+        "type": "'complete' or 'dismiss' or 'execute'",
+        "description": "Optional. Defaults to 'execute'. Whether the Suggestion should be executed, marked as complete, or dismissed."
+      },
+      {
+        "name": "bulkExecution",
+        "type": "'none' or 'allUser' or 'allAccount'",
+        "description": "Optional. Only applies when actionType = 'execute' and the Suggestion is a Call suggestion. Determines how many Suggestions are shown in the My Schedule UI."
+      }
+    ],
+    "return": "When the request is successful, the desired action is made against the specified suggestion. The success flag in the returned JavaScript payload indicates the suggestion was marked as Actioned."
+  },
+  "launchMediaForAccount": {
+    "title": "launchMediaForAccount(accountId, presId, keyMessageMediaFileName)",
+    "blurb": "The launchMediaForAccount method enables launching a specific key message in a CLM presentation directly from MyInsights content or launching the CLM media library.",
+    "parameters": [
+      {
+        "name": "accountId",
+        "type": "string",
+        "description": "The ID of the Account."
+      },
+      {
+        "name": "presId",
+        "type": "string",
+        "description": "Optional. The ID of the CLM Presentation that you wish to open."
+      },
+      {
+        "name": "keyMessageMediaFileName",
+        "type": "string",
+        "description": "Must be provided if and only if presId is provided. The Media_File_Name field of the Key Message that you wish to launch."
+      }
+    ],
+    "return": "When the request is successful, the specified CLM presentation displays. If the keyMessageMediaFileName parameter is populated with a valid Key Message, the presentation opens directly to that Key Message. If the presentationId and keyMessageMediaFileName parameters are blank, a successful request displays the CLM Library instead, enabling users to select the presentation to display."
+  },
+  "sendToMySchedule": {
+    "title": "sendToMySchedule(config)",
+    "blurb": "Displays the My Schedule screen with the specified accounts selected for users to schedule calls with. Users can return to the MyInsights content via the Back button. This method is supported for the Territory, Account, and Account Plan entry points.",
+    "parameters": [
+      {
+        "name": "config.accountIds",
+        "type": "Array of strings",
+        "description": "An array of Account IDs. Must not be mobile IDs for online content. Can be IDs or mobile IDs for content on other platforms. Can be empty."
+      }
+    ],
+    "return": "Returns a Promise that resolves when the user returns to this page."
+  },
+  "createRecord": {
+    "title": "createRecord(config)",
+    "blurb": "Creates a record for the specified object directly from MyInsights content. See Inline Editing for MyInsights Content for more information. MyInsights content does not support using browser APIs for storage, for example, Web Storage and IndexedDB. Instead, developers can save data to MyInsights_Data_vod records.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the object to create."
+      },
+      {
+        "name": "config.fields",
+        "type": "object",
+        "description": "Key-values pair of the API names of fields and the values to store in each field."
+      }
+    ],
+    "return": "Returns a Promise that resolves with the ID of the created record."
+  },
+  "updateRecord": {
+    "title": "updateRecord(config)",
+    "blurb": "Updates fields on the specified record directly from MyInsights content. See Inline Editing for MyInsights Content for more information.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the object to update."
+      },
+      {
+        "name": "config.id",
+        "type": "string",
+        "description": "The ID of the object to update."
+      },
+      {
+        "name": "config.fields",
+        "type": "object",
+        "description": "Key-values pair of the API names of fields and the values to store in each field."
+      }
+    ]
+  },
+  "getVaultSessionId": {
+    "title": "getVaultSessionId()",
+    "blurb": "Gets the Vault Session ID and Vault instance URL. Used to interact with Vault or authenticate to external systems."
+  },
+  "getSSOAccessToken": {
+    "title": "getSSOAccessToken(sso_config_name)",
+    "blurb": "Gets an access token from a configured SSO provider. Used to authenticate to external systems.",
+    "parameters": [
+      {
+        "name": "sso_config_name",
+        "type": "string",
+        "description": "The API name of the X-Pages SSO Configuration record to use. Required. "
+      }
+    ]
+  },
+  "request": {
+    "title": "request(config)",
+    "blurb": "Returns data requested from the specified external application. This method can be called multiple times to send parallel requests. See Integrating External Data with MyInsights for more information.",
+    "parameters": [
+      {
+        "name": "config.url",
+        "type": "string",
+        "description": "The URL to send the request to."
+      },
+      {
+        "name": "config.method",
+        "type": "string",
+        "description": "Optional. Defaults to 'GET'. The HTTP method to use for the request."
+      },
+      {
+        "name": "config.headers",
+        "type": "object",
+        "description": "Optional. An object where the key/value pairs are the headers to include in the request. All values must be strings."
+      },
+      {
+        "name": "config.body",
+        "type": "string or object",
+        "description": "Optional. The body data to include in the request."
+      },
+      {
+        "name": "config.timeout",
+        "type": "number",
+        "description": "Optional. Default is 30. The number of seconds to wait for a response before expiring the request."
+      },
+      {
+        "name": "config.expect",
+        "type": "'text' or 'blob'",
+        "description": "Optional. Defaults to 'text'. Determines whether the response should be interpreted as text or a binary file."
+      }
+    ]
+  },
+  "getCurrentPosition": {
+    "title": "getCurrentPosition()",
+    "blurb": "Returns the geographic location of the user’s device, enabling developers to use the location values to create content which help users plan activities, for example, by marking the device’s location on a map (for example, Google Maps), comparing and displaying distances to account locations, or creating a location log. See Requesting Location via MyInsights for more information.",
+    "return": "When the request is successful, the promise returns the results of the query, including: Timestamp, Latitude, Longitude, Accuracy"
+  },
+  "refreshOrder": {
+    "title": "refreshOrder()",
+    "blurb": "This method can be embedded in a button or link to display the Order Lines tab for an order and recalculate the order based on the pricing rules. To avoid unexpected navigation away from the visualization, developers should make sure this method is embedded in an obviously actionable element.",
+    "return": "Returns a Promise that resolves when the user is navigated to the Order Lines tab."
+  },
+  "getFeedbackData": {
+    "title": "getFeedbackData()",
+    "blurb": "This method retrieves data about upcoming changes to the current territory."
+  },
+  "getAttendeeDataForCurrentCall": {
+    "title": "getAttendeeDataForCurrentCall()",
+    "blurb": "Returns data about the accounts added to the Attendees section of the specified call report."
+  },
+  "setIOSThirdPartyCookie": {
+    "title": "setIOSThirdPartyCookie(domain)",
+    "blurb": "This method allows developers to integrate third-party data sources into MyInsights content when the third-party data sources use cookies for authentication.",
+    "parameters": [
+      {
+        "name": "domain",
+        "type": "string",
+        "description": "The domain to set the placeholder cookie for."
+      }
+    ]
+  }
 }
