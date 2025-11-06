@@ -1,9 +1,9 @@
 /*
- *  Veeva X-Pages Library version 251.0.20
+ *  Veeva X-Pages Library version 253.1.10.1311
  *
  *  http://developer.veevacrm.com/
  *
- *  Copyright Â© 2024 Veeva Systems, Inc. All rights reserved.
+ *  Copyright © 2024 Veeva Systems, Inc. All rights reserved.
  *
  *  X-Pages Library is dependent on the Q library, which enables you to work with promises as returns from the X-Pages Library methods.
  *  Include the Q library as a script in the custom report package.
@@ -1244,6 +1244,10 @@
 
     function constructLinkingRequest(command, configObject) {
       var request = [];
+      var target =
+        configObject.target && !Array.isArray(configObject.target)
+          ? [configObject.target]
+          : configObject.target;
       if (
         typeof command === "string" &&
         command.length &&
@@ -1251,6 +1255,9 @@
       ) {
         request.push("veeva:" + command + "(" + configObject.object + ")");
         request.push("fields(" + JSON.stringify(configObject.fields) + ")");
+        if (target) {
+          request.push("target(" + JSON.stringify(target) + ")");
+        }
       }
       return request.join(",");
     }
@@ -1736,8 +1743,8 @@
     };
 
     /*
-           Returns the value of a field for a specific record related to the current object
-           */
+         Returns the value of a field for a specific record related to the current object
+         */
     ds.getDataForCurrentObject = function (object, field) {
       var deferred = Q.defer();
 
@@ -1810,12 +1817,12 @@
     };
 
     /*
-           Returns the translated label for each of the picklist values of the specified field
+         Returns the translated label for each of the picklist values of the specified field
 
-           object - API Name of the object
-           field - API Name of the picklist field
-           includeInactive - boolean controlling whether inactive picklist values are returned
-           */
+         object - API Name of the object
+         field - API Name of the picklist field
+         includeInactive - boolean controlling whether inactive picklist values are returned
+         */
     ds.getPicklistValueLabels = function (object, field, includeInactive) {
       var deferred = Q.defer();
 
