@@ -221,6 +221,22 @@
       }
     ]
   },
+  "getLifecycleStates": {
+    "title": "getLifecycleStates(objectName, includeInactive)",
+    "blurb": "getLifecycleStates returns the lifecycle states for the specified object.",
+    "parameters": [
+      {
+        "name": "objectName",
+        "type": "string",
+        "description": "The API name of the object that you wish to query lifecycle states for."
+      },
+      {
+        "name": "includeInactive",
+        "type": "boolean",
+        "description": "Optional. Whether to include inactive lifecycle states. Defaults to false."
+      }
+    ]
+  },
   "queryVDSRecord": {
     "title": "queryVDSRecord(config)",
     "blurb": "Returns data records from Nitro. When querying Nitro data from MyInsights content in the browser, date fields are returned as Unix timestamps, not ISO8601 date strings.",

@@ -1,5 +1,5 @@
 /*
- *  Veeva X-Pages Library version 253.1.10.1311
+ *  Veeva X-Pages Library version 253.2.10.1325
  *
  *  http://developer.veevacrm.com/
  *
@@ -2365,6 +2365,24 @@
       }
 
       return deferred.promise;
+    };
+
+    ds.getLifecycleStates = function (objectName, includeInactive = false) {
+      if (!objectName) {
+        var deferred = Q.defer();
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "getLifecycleStates called with no parameter",
+          ),
+        );
+        return deferred.promise;
+      }
+      return ds.doPostMessage({
+        command: "getLifecycleStates",
+        object: objectName,
+        includeInactive: includeInactive,
+      });
     };
 
     ds.getCurrentPosition = function () {
