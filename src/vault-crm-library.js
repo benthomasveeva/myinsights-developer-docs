@@ -1,5 +1,5 @@
 /*
- *  Veeva X-Pages Library version 253.2.10.1325
+ *  Veeva X-Pages Library version 261.0.10.1363
  *
  *  http://developer.veevacrm.com/
  *
@@ -2217,17 +2217,6 @@
           `Invalid bulkExecution. Given ${bulkExecution}. Available options: ${[...bulkExecutionOptions.keys()]}`,
         );
         deferred.reject(invalidBulkOptionError);
-      } else if (
-        (veevaUtil.isWin8() ||
-          veevaUtil.isWindowsMobile() ||
-          veevaUtil.isOnline()) &&
-        bulkExecution !== "none"
-      ) {
-        const invalidBulkPlatformError = createErrorResponse(
-          7,
-          "Bulk execution options are only available on the iPad platform",
-        );
-        deferred.reject(invalidBulkPlatformError);
       } else {
         ds.smartLinking({
           object: "suggestion__v",
@@ -2882,6 +2871,10 @@
 
     ds.getVeevaLinkAccessToken = function () {
       return ds.doPostMessage({ command: "getVeevaLinkAccessToken" });
+    };
+
+    ds.getOverlayContext = function () {
+      return ds.doPostMessage({ command: "getOverlayContext" });
     };
 
     // We will do nothing when this method is called window.OnlineAPI is responsible for calling postMessage

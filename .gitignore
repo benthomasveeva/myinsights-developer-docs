@@ -11,3 +11,4 @@
 /codegen/Gen
 /generated
 .DS_Store
+.claude/
