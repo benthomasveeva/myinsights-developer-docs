@@ -147,6 +147,11 @@
       }
     ]
   },
+  "getOverlayContext": {
+    "title": "getOverlayContext()",
+    "blurb": "This method only works in the Prompt Overlay entry point. Returns the context that the prompt overlay finds itself in (the CRM page that the overlay is in front of).",
+    "parameters": []
+  },
   "getAvailableObjects": {
     "title": "getAvailableObjects()",
     "blurb": "This method retrieves a list of objects for which the user has Read permissions to in their org."
