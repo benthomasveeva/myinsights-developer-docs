@@ -1,5 +1,5 @@
 /*
- *  Veeva X-Pages Library version 253.5.10.1344
+ *  Veeva X-Pages Library version 261.3.10.1385
  *
  *  http://developer.veevacrm.com/
  *
@@ -139,8 +139,8 @@
     veevaUtil.isIPad = function () {
       return Boolean(
         window.webkit &&
-          window.webkit.messageHandlers &&
-          window.webkit.messageHandlers.myInsightsAPI,
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.myInsightsAPI,
       );
     };
 
@@ -708,6 +708,10 @@
       return initiateAction("viewRecord", configObject);
     };
 
+    olAPI.editRecord = function (configObject) {
+      return initiateAction("editRecord", configObject);
+    };
+
     olAPI.smartLinking = function (configObject) {
       numQueriesExecuted += 1;
       var deferred = Q.defer();
@@ -1100,7 +1104,6 @@
                       var records = resp[queryConfig.object],
                         r = records.length;
                       r--;
-
                     ) {
                       var record = records[r];
                       if (
@@ -2016,6 +2019,27 @@
       return deferred.promise;
     };
 
+    ds.editRecord = function (config) {
+      var deferred = Q.defer();
+
+      if (config && config.object && config.fields?.id) {
+        return ds.doPostMessage({
+          command: "editRecord",
+          configObject: config,
+        });
+      } else {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "editRecord called with invalid configuration: " +
+              JSON.stringify(config),
+          ),
+        );
+      }
+
+      return deferred.promise;
+    };
+
     function validTargetsField(targets, fields) {
       for (const target of targets) {
         let isValid = false;
@@ -2217,17 +2241,6 @@
           `Invalid bulkExecution. Given ${bulkExecution}. Available options: ${[...bulkExecutionOptions.keys()]}`,
         );
         deferred.reject(invalidBulkOptionError);
-      } else if (
-        (veevaUtil.isWin8() ||
-          veevaUtil.isWindowsMobile() ||
-          veevaUtil.isOnline()) &&
-        bulkExecution !== "none"
-      ) {
-        const invalidBulkPlatformError = createErrorResponse(
-          7,
-          "Bulk execution options are only available on the iPad platform",
-        );
-        deferred.reject(invalidBulkPlatformError);
       } else {
         ds.smartLinking({
           object: "suggestion__v",

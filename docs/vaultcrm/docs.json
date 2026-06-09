@@ -369,6 +369,23 @@
     ],
     "return": "When the request is successful, the application displays the native interface."
   },
+  "editRecord": {
+    "title": "editRecord(config)",
+    "blurb": "The editRecord method navigates to the edit screen for a target record. If the user cannot edit the record, they will be taken to the view screen for that target record instead. ",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "The API name of the target object."
+      },
+      {
+        "name": "config.fields.id",
+        "type": "string",
+        "description": "The ID of the target object."
+      }
+    ],
+    "return": "When the request is successful, the application displays the native interface."
+  },
   "viewRecord": {
     "title": "viewRecord(config)",
     "blurb": "The viewRecord method navigates from a MyInsights tab in one record/location to a target record/location. If the target record/location is an Account with one or more MyInsights tabs, developers can specify a target tab to navigate to directly. Users can navigate back to the original MyInsights report by selecting back, returning to their last viewed screen.",
@@ -380,7 +397,7 @@
       },
       {
         "name": "config.fields",
-        "type": "string",
+        "type": "object",
         "description": "An object, where the keys are the API names of the fields to send. Only certain fields are accepted."
       },
       {
