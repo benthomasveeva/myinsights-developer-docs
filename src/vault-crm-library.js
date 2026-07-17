@@ -1,5 +1,5 @@
 /*
- *  Veeva X-Pages Library version 261.3.10.1385
+ *  Veeva X-Pages Library version 262.0.10.1425
  *
  *  http://developer.veevacrm.com/
  *
@@ -971,7 +971,7 @@
 
           result.object.name = k;
 
-          for (var i = data.length; i--; ) {
+          for (var i = data.length; i--;) {
             for (var d in data[i]) {
               if (data[i].hasOwnProperty(d)) {
                 // d is the key of the data point
@@ -1411,7 +1411,7 @@
         ) {
           deferred.resolve(wrapResult("query", formatResult(result)));
         } else {
-          for (var a = arguments.length; a--; ) {
+          for (var a = arguments.length; a--;) {
             console.error("query failure arguments", arguments[a]);
           }
           deferred.reject(JSON.stringify(result));
@@ -1687,11 +1687,11 @@
         joinFrom = q1Copy;
       }
       // Set up a dictonary with references to each result on which to join
-      for (var d = joinFrom.data.length; d--; ) {
+      for (var d = joinFrom.data.length; d--;) {
         joins[joinFrom.data[d].ID.value] = joinFrom.data[d];
       }
       // rename the fields on the secondary result set to reflect their unique relationship to the original results
-      for (d = secondaryQuery.data.length; d--; ) {
+      for (d = secondaryQuery.data.length; d--;) {
         for (k in secondaryQuery.data[d]) {
           if (secondaryQuery.data[d].hasOwnProperty(k) && k !== "date") {
             var propertyToMove = secondaryQuery.data[d][k];
@@ -1706,7 +1706,7 @@
       if (joinTo.object.name === secondaryQuery.object.name) {
         keyForID = joinTo.object.name + "." + keyForID;
       }
-      for (d = joinTo.data.length; d--; ) {
+      for (d = joinTo.data.length; d--;) {
         // merge joinTo[d] with joins[joinTo[d][keyForID]]
         veevaUtil.mergeObjects(
           joinTo.data[d],
@@ -1717,7 +1717,7 @@
       // begin label renaming and combining
       var deleteExcludedLabels = function (labels) {
           for (var k in fieldsLabelsToExclude) {
-            for (var n = labels.length; n--; ) {
+            for (var n = labels.length; n--;) {
               if (labels[n].name === k) {
                 labels.splice(n, 1);
               }
@@ -1728,7 +1728,7 @@
         primaryLabels = deleteExcludedLabels(primaryQuery.fieldLabels),
         secondaryLabels = deleteExcludedLabels(secondaryQuery.fieldLabels);
       // rename labels in q2Copy
-      for (var l = secondaryLabels.length, label; l--; ) {
+      for (var l = secondaryLabels.length, label; l--;) {
         label = secondaryLabels[l];
         label.name = secondaryQuery.object.name + "." + label.name;
       }
@@ -2845,50 +2845,6 @@
       });
     };
 
-    ds.setIOSThirdPartyCookie = function (domainForThirdPartyCookie) {
-      const deferred = Q.defer();
-
-      if (
-        veevaUtil.isWin8() ||
-        veevaUtil.isWindowsMobile() ||
-        veevaUtil.isOnline()
-      ) {
-        deferred.reject(
-          createErrorResponse(
-            errorCode.INVALID_PLATFORM,
-            "setIOSThirdPartyCookie is only supported on the IOS platform",
-          ),
-        );
-        return deferred.promise;
-      }
-
-      if (typeof domainForThirdPartyCookie === "undefined") {
-        deferred.reject(
-          createErrorResponse(
-            errorCode.NO_PARAMETER,
-            "setIOSThirdPartyCookie must be passed a domain name with type string",
-          ),
-        );
-        return deferred.promise;
-      } else if (typeof domainForThirdPartyCookie !== "string") {
-        deferred.reject(
-          createErrorResponse(
-            errorCode.INVALID_PARAM,
-            "setIOSThirdPartyCookie must be passed a domain name with type string",
-          ),
-        );
-        return deferred.promise;
-      }
-
-      const request = {
-        command: "setIOSThirdPartyCookie",
-        domainForThirdPartyCookie,
-      };
-      sendRequestAndRejectPromiseForFailure(request, deferred);
-
-      return deferred.promise;
-    };
-
     ds.getAttendeeDataForCurrentCall = function () {
       return ds.doPostMessage({ command: "getAttendeeDataForCurrentCall" });
     };
@@ -2899,6 +2855,322 @@
 
     ds.getOverlayContext = function () {
       return ds.doPostMessage({ command: "getOverlayContext" });
+    };
+
+    ds.searchForDocuments = function (config) {
+      var deferred = Q.defer();
+      if (
+        !config ||
+        config.fields == null ||
+        (Array.isArray(config.fields) && config.fields.length === 0) ||
+        config.keyword == null
+      ) {
+        var missingParam =
+          !config ||
+          config.fields == null ||
+          (Array.isArray(config.fields) && config.fields.length === 0)
+            ? "fields"
+            : "keyword";
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "searchForDocuments called with no " +
+              missingParam +
+              ": " +
+              JSON.stringify(config),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (!Array.isArray(config.fields)) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "searchForDocuments called with invalid parameter fields: " +
+              JSON.stringify(config.fields),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (typeof config.keyword !== "string" || !config.keyword.trim()) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "searchForDocuments called with invalid parameter keyword: " +
+              JSON.stringify(config.keyword),
+          ),
+        );
+        return deferred.promise;
+      }
+      return ds.doPostMessage({
+        command: "searchDocuments",
+        fields: config.fields,
+        keyword: config.keyword,
+      });
+    };
+
+    // Convert a data URL ("data:<type>;base64,<b64>") to a same-origin blob URL so the
+    // resulting URL is usable in an <img src> inside the cross-origin CDN iframe.
+    function dataUrlToBlobUrl(dataUrl) {
+      var parts = dataUrl.split(",");
+      var contentType = parts[0].match(/:(.*?);/)[1];
+      var binary = atob(parts[1]);
+      var bytes = new Uint8Array(binary.length);
+      for (var i = 0; i < binary.length; i += 1) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return URL.createObjectURL(new Blob([bytes], { type: contentType }));
+    }
+
+    ds.getDocumentThumbnail = function (documentId) {
+      var deferred = Q.defer();
+      if (documentId == null) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "getDocumentThumbnail called with no documentId: " +
+              JSON.stringify(documentId),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (typeof documentId !== "string" || !documentId) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "getDocumentThumbnail called with invalid parameter documentId: " +
+              JSON.stringify(documentId),
+          ),
+        );
+        return deferred.promise;
+      }
+      return ds
+        .doPostMessage({
+          command: "getDocumentThumbnail",
+          documentId: documentId,
+        })
+        .then(function (resp) {
+          return {
+            ...resp,
+            data: resp.data != null ? dataUrlToBlobUrl(resp.data) : null,
+          };
+        });
+    };
+
+    ds.viewDocument = function (documentId) {
+      var deferred = Q.defer();
+
+      if (!documentId && documentId !== 0) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "viewDocument called with no documentId: " +
+              JSON.stringify(documentId),
+          ),
+        );
+        return deferred.promise;
+      }
+
+      if (typeof documentId !== "string" || documentId === "") {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "viewDocument called with invalid parameter documentId: " +
+              JSON.stringify(documentId),
+          ),
+        );
+        return deferred.promise;
+      }
+
+      return ds.doPostMessage({
+        command: "viewDocument",
+        configObject: {
+          documentId: String(documentId),
+        },
+      });
+    };
+
+    ds.queryDocuments = function (config) {
+      var deferred = Q.defer();
+      if (
+        !config ||
+        config.fields == null ||
+        (Array.isArray(config.fields) && config.fields.length === 0)
+      ) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "queryDocuments called with no fields: " + JSON.stringify(config),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (!Array.isArray(config.fields)) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "queryDocuments called with invalid parameter fields: " +
+              JSON.stringify(config.fields),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (config.where !== undefined && typeof config.where !== "string") {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "queryDocuments called with invalid parameter where: " +
+              JSON.stringify(config.where),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (
+        config.limit !== undefined &&
+        (!Number.isInteger(config.limit) || config.limit < 0)
+      ) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "queryDocuments called with invalid parameter limit: " +
+              JSON.stringify(config.limit),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (config.sort !== undefined && !Array.isArray(config.sort)) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "queryDocuments called with invalid parameter sort: " +
+              JSON.stringify(config.sort),
+          ),
+        );
+        return deferred.promise;
+      }
+      return ds.doPostMessage({
+        command: "queryDocuments",
+        fields: config.fields,
+        where: config.where,
+        limit: config.limit,
+        sort: config.sort,
+      });
+    };
+
+    ds.getRecordAttachments = function (config) {
+      var deferred = Q.defer();
+      if (
+        !config ||
+        config.object == null ||
+        config.id == null ||
+        config.fields == null ||
+        (Array.isArray(config.fields) && config.fields.length === 0)
+      ) {
+        var missingParam =
+          !config || config.object == null
+            ? "object"
+            : config.id == null
+              ? "id"
+              : "fields";
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "getRecordAttachments called with no " +
+              missingParam +
+              ": " +
+              JSON.stringify(config),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (typeof config.object !== "string" || config.object === "") {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "getRecordAttachments called with invalid parameter object: " +
+              JSON.stringify(config.object),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (typeof config.id !== "string" || config.id === "") {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "getRecordAttachments called with invalid parameter id: " +
+              JSON.stringify(config.id),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (!Array.isArray(config.fields)) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "getRecordAttachments called with invalid parameter fields: " +
+              JSON.stringify(config.fields),
+          ),
+        );
+        return deferred.promise;
+      }
+      return ds.doPostMessage({
+        command: "getRecordAttachments",
+        object: config.object,
+        id: config.id,
+        fields: config.fields,
+      });
+    };
+
+    ds.getDocumentsInBinder = function (config) {
+      var deferred = Q.defer();
+      if (
+        !config ||
+        config.fields == null ||
+        (Array.isArray(config.fields) && config.fields.length === 0) ||
+        config.binder == null
+      ) {
+        var missingParam =
+          !config ||
+          config.fields == null ||
+          (Array.isArray(config.fields) && config.fields.length === 0)
+            ? "fields"
+            : "binder";
+        deferred.reject(
+          createErrorResponse(
+            errorCode.NO_PARAMETER,
+            "getDocumentsInBinder called with no " +
+              missingParam +
+              ": " +
+              JSON.stringify(config),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (!Array.isArray(config.fields)) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "getDocumentsInBinder called with invalid parameter fields: " +
+              JSON.stringify(config.fields),
+          ),
+        );
+        return deferred.promise;
+      }
+      if (typeof config.binder !== "string" || !config.binder) {
+        deferred.reject(
+          createErrorResponse(
+            errorCode.INVALID_PARAM,
+            "getDocumentsInBinder called with invalid parameter binder: " +
+              JSON.stringify(config.binder),
+          ),
+        );
+        return deferred.promise;
+      }
+      return ds.doPostMessage({
+        command: "getDocumentsInBinder",
+        fields: config.fields,
+        binder: config.binder,
+      });
     };
 
     // We will do nothing when this method is called window.OnlineAPI is responsible for calling postMessage

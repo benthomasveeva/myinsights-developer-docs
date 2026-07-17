@@ -17,7 +17,7 @@
   },
   "queryRecord": {
     "title": "queryRecord(config)",
-    "blurb": "This method returns the queried data without adding additional metadata (i.e., object labels, field labels etc.) in the returned results. Fields must only be specified once per query or an error is returned.",
+    "blurb": "This method returns the queried data without adding additional metadata (i.e., object labels, field labels etc.) in the returned results. Fields must only be specified once per query or an error is returned. When an attachment field is requested, the platform fetches the attached document for each returned record: if the record has no attachment in the field, the field is null; if the attachment can be parsed as text, that text is returned as the field's value; if it cannot be parsed as text, the query returns an error.",
     "parameters": [
       {
         "name": "config.object",
@@ -583,14 +583,104 @@
     "title": "getAttendeeDataForCurrentCall()",
     "blurb": "Returns data about the accounts added to the Attendees section of the specified call report."
   },
-  "setIOSThirdPartyCookie": {
-    "title": "setIOSThirdPartyCookie(domain)",
-    "blurb": "This method allows developers to integrate third-party data sources into MyInsights content when the third-party data sources use cookies for authentication.",
+  "searchForDocuments": {
+    "title": "searchForDocuments(config)",
+    "blurb": "Searches for documents",
     "parameters": [
       {
-        "name": "domain",
+        "name": "config.fields",
+        "type": "list of strings",
+        "description": "Required. The list of document fields to include in the result. All fields must be available to the user on the current platform."
+      },
+      {
+        "name": "config.keyword",
         "type": "string",
-        "description": "The domain to set the placeholder cookie for."
+        "description": "Required. This is the keyword to search for."
+      }
+    ]
+  },
+  "queryDocuments": {
+    "title": "queryDocuments(config)",
+    "blurb": "Queries for documents or binders matching a where clause. Returns the requested fields for the latest steady state version of each matching document that the user has access to on the current platform. Use the binder__v field in the where clause to only get binders (binder__v = true) or to exclude binders (binder__v = false).",
+    "parameters": [
+      {
+        "name": "config.fields",
+        "type": "list of strings",
+        "description": "Required. The list of fields to query data from for each document."
+      },
+      {
+        "name": "config.where",
+        "type": "string",
+        "description": "Optional. If present, must be a valid where clause."
+      },
+      {
+        "name": "config.limit",
+        "type": "integer",
+        "description": "Optional. If present, must be a positive integer."
+      },
+      {
+        "name": "config.sort",
+        "type": "list of strings",
+        "description": "Optional. Each string must be a valid field name followed by either 'ASC' or 'DESC' (case insensitive)."
+      }
+    ]
+  },
+  "getDocumentsInBinder": {
+    "title": "getDocumentsInBinder(config)",
+    "blurb": "Returns the latest steady state versions of all documents directly in the specified binder. Binders can contain other binders, so this method may need to be called recursively to get the full contents of a nested binder structure.",
+    "parameters": [
+      {
+        "name": "config.fields",
+        "type": "list of strings",
+        "description": "Required. The list of fields to query data from for each document."
+      },
+      {
+        "name": "config.binder",
+        "type": "string",
+        "description": "Required. The ID of the binder to get the documents from."
+      }
+    ]
+  },
+  "getDocumentThumbnail": {
+    "title": "getDocumentThumbnail(documentId)",
+    "blurb": "Returns the thumbnail for the latest steady state version of a document. If that version has no thumbnail, the returned value is null. Otherwise, the value is a URL that can be used directly as the src attribute of an img tag.",
+    "parameters": [
+      {
+        "name": "documentId",
+        "type": "string",
+        "description": "Required. The ID of the document to get the thumbnail for."
+      }
+    ]
+  },
+  "getRecordAttachments": {
+    "title": "getRecordAttachments(config)",
+    "blurb": "Returns the requested fields for the latest version of each attachment attached to the specified record.",
+    "parameters": [
+      {
+        "name": "config.object",
+        "type": "string",
+        "description": "Required. The API name of the object."
+      },
+      {
+        "name": "config.id",
+        "type": "string",
+        "description": "Required. The ID of the record to get attachments for."
+      },
+      {
+        "name": "config.fields",
+        "type": "list of strings",
+        "description": "Required. The fields to retrieve for each attachment."
+      }
+    ]
+  },
+  "viewDocument": {
+    "title": "viewDocument(documentId)",
+    "blurb": "Navigates to and displays a document separately from the current X-Page, using a best-effort approach. On browser, opens the latest steady state version of the document in the standard document viewer popup (browser never returns an error). On iPad and iPhone, displays the latest steady state version in a document viewer that overlays the X-Page (an error is returned if the document does not exist on the device).",
+    "parameters": [
+      {
+        "name": "documentId",
+        "type": "string",
+        "description": "Required. The ID of the document to navigate to."
       }
     ]
   }
