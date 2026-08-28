@@ -16,7 +16,7 @@
     <script>
         const app = Elm.Main.init({
             node: document.getElementById("root"),
-            flags: { width: window.innerWidth, height: window.innerHeight }
+            flags: { width: window.innerWidth, height: window.innerHeight, isOnline: (new window.VeevaUtilities()).isOnline(), }
         });
         const originalLog = console.log;
         const originalWarn = console.warn;

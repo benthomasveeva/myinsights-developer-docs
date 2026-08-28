@@ -60,6 +60,7 @@ type alias Window =
     { resizeCount : Int
     , width : Int
     , height : Int
+    , platformSaysIsOnline : Bool
     }
 
 
@@ -76,7 +77,7 @@ init flags =
       , consoleLogs = []
       , window =
             JD.decodeValue windowDecoder flags
-                |> Result.withDefault { width = 1024, height = 768, resizeCount = 0 }
+                |> Result.withDefault { width = 1024, height = 768, resizeCount = 0, platformSaysIsOnline = False }
       }
     , Cmd.none
     )
@@ -84,9 +85,10 @@ init flags =
 
 windowDecoder : Decoder Window
 windowDecoder =
-    JD.map2 (Window 0)
+    JD.map3 (Window 0)
         (JD.field "width" JD.int)
         (JD.field "height" JD.int)
+        (JD.field "isOnline" JD.bool)
 
 
 
@@ -161,7 +163,14 @@ update msg model =
             )
 
         WindowResized width height ->
-            ( { model | window = { width = width, height = height, resizeCount = model.window.resizeCount + 1 } }
+            ( { model
+                | window =
+                    { width = width
+                    , height = height
+                    , resizeCount = model.window.resizeCount + 1
+                    , platformSaysIsOnline = model.window.platformSaysIsOnline
+                    }
+              }
             , Cmd.none
             )
 
@@ -254,7 +263,10 @@ type PlatformGuess
 
 guessPlatform : Window -> PlatformGuess
 guessPlatform window =
-    if window.resizeCount > 1 || window.height < 200 then
+    if window.height < 200 then
+        ProbablyOnline
+
+    else if window.platformSaysIsOnline then
         ProbablyOnline
 
     else
@@ -265,6 +277,7 @@ guessPlatform window =
         case ( device.class, device.orientation ) of
             ( Element.Phone, Element.Portrait ) ->
                 -- the iPhone app is only ever in portrait mode
+                -- Or this could be Prompt Overlay on an iPad, but good enough
                 ProbablyIphone
 
             ( Element.Tablet, Element.Landscape ) ->
